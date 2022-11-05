@@ -6,7 +6,7 @@
 #no errors throughout
 $ErrorActionPreference = 'silentlycontinue'
 
-$DebloatFolder = "C:\Temp\Windows10Debloater"
+$DebloatFolder = "$ENV:Temp\win10prep\logs"
 If (Test-Path $DebloatFolder) {
     Write-Output "$DebloatFolder exists. Skipping."
 }
@@ -17,7 +17,7 @@ Else {
     Write-Output "The folder $DebloatFolder was successfully created."
 }
 
-Start-Transcript -OutputDirectory "$DebloatFolder"
+Start-Transcript "$DebloatFolder\debloater.log"
 
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
@@ -569,7 +569,7 @@ Function UnpinStart {
 </LayoutModificationTemplate>
 "@
 
-    $layoutFile = "C:\Windows\StartMenuLayout.xml"
+    $layoutFile = "$ENV:SystemRoot\StartMenuLayout.xml"
 
     #Delete layout file if it already exists
     If (Test-Path $layoutFile) {

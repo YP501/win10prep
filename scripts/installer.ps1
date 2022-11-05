@@ -1,5 +1,5 @@
-function downloadAndinstallScoopApps {
-    $scoopApps = @(
+function DownloadAndinstallScoopApps {
+    $ScoopApps = @(
         "7zip"
         "audacity"
         "blender"
@@ -25,8 +25,7 @@ function downloadAndinstallScoopApps {
     Write-Output "Checking if scoop is already installed..."
     Start-Sleep -Seconds 1
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        Write-Output "Scoop is already installed. Skipping..."
-        Write-Output "`r`n"
+        Write-Output "Scoop is already installed. Skipping...`r`n"
     }
     else {
         Write-Output "Scoop is not installed. Installing now."
@@ -34,7 +33,7 @@ function downloadAndinstallScoopApps {
         Write-Output "`r`n"
     }
 
-    $scoopAppsDir = "$home\scoop\apps"
+    $ScoopAppsDir = "$home\scoop\apps"
 
     # Installing git for getting scoop buckets
     scoop install git
@@ -47,25 +46,25 @@ function downloadAndinstallScoopApps {
     Write-Output "`r`n"
 
     # Installing the apps with scoop
-    ForEach ($scoopApp in $scoopApps) {
-        scoop install $scoopApp
+    ForEach ($ScoopApp in $ScoopApps) {
+        scoop install $ScoopApp
         Write-Output "`r`n"
         
         # App specific scripts to run after installing the app
-        switch ($scoopApp) {
+        switch ($ScoopApp) {
             "7zip" {
                 Write-Output "`r`nInstalling 7zip context menu registry entries..."
-                reg import "$scoopAppsDir\7zip\current\install-context.reg"
+                Reg Import "$ScoopAppsDir\7zip\current\install-context.reg"
             }
             "vscode" {
                 Write-Output "`r`nInstalling vscode context menu registry entries..."
-                reg import "$scoopAppsDir\vscode\current\install-associations.reg"
-                reg import "$scoopAppsDir\vscode\current\install-context.reg"
+                Reg Import "$ScoopAppsDir\vscode\current\install-associations.reg"
+                Reg Import "$ScoopAppsDir\vscode\current\install-context.reg"
 
                 # Installation of vscode extensions
                 Write-Output "`r`nPreparing installation of vscode extensions..."
                 Start-Sleep -Seconds 2
-                $vscodeExtensions = @(
+                $VscodeExtensions = @(
                     "christian-kohler.npm-intellisense"
                     "dbaeumer.vscode-eslint"
                     "dbankier.vscode-quick-select"
@@ -91,9 +90,9 @@ function downloadAndinstallScoopApps {
                     "zhuangtongfa.material-theme"
                 )
 
-                ForEach ($extension in $vscodeExtensions) {
-                    Write-Host "Installing $extension..." -NoNewline
-                    code --install-extension $extension | Out-Null
+                ForEach ($Extension in $VscodeExtensions) {
+                    Write-Host "Installing $Extension..." -NoNewline
+                    code --install-extension $Extension | Out-Null
                     Write-Output " Done"
                 }
                 Write-Output "`r`n"
@@ -104,7 +103,7 @@ function downloadAndinstallScoopApps {
             }
             "python" {
                 Write-Output "`r`nInstalling python registry entries..."
-                reg import "$scoopAppsDir\python\current\install-pep-514.reg"
+                Reg Import "$ScoopAppsDir\python\current\install-pep-514.reg"
             }
         }
     }
@@ -114,22 +113,22 @@ function downloadAndinstallScoopApps {
 }
 
 # Function to get the latest release download URL with a filter from a Github repository
-function getDownloadUrl {
+function GetDownloadUrl {
 
     param(
         [parameter(Mandatory = $true)]
-        $repo,
+        $Repo,
         [parameter(Mandatory = $true)]
-        $filter
+        $Filter
     )
 
-    $uri = "https://api.github.com/repos/$repo/releases"
+    $Uri = "https://api.github.com/repos/$Repo/releases"
 
     # Get all download URLs from latest release
-    $downloadUrls = ((Invoke-RestMethod -Method GET -Uri $uri)[0].assets).browser_download_url
+    $DownloadUrls = ((Invoke-RestMethod -Method GET -Uri $Uri)[0].assets).browser_download_url
 
     # Filter all download URls and return filtered URL
-    ($downloadUrls | Select-String -Pattern $filter).toString()
+    ($DownloadUrls | Select-String -Pattern $Filter).toString()
 }
 
 # File downloader function using .NET WebClient
@@ -137,82 +136,89 @@ function downloadFile {
 
     param(
         [parameter(Mandatory = $true)]
-        $url,
+        $Url,
         [parameter(Mandatory = $true)]
-        $destination
+        $Destination
     )
 
-    $fileName = Split-Path $url -leaf
+    $FileName = Split-Path $Url -leaf
 
-    $wc = New-Object System.Net.WebClient
-    $wc.DownloadFile($url, "$destination\$fileName")
-    $wc.Dispose()
+    $Wc = New-Object System.Net.WebClient
+    $Wc.DownloadFile($Url, "$Destination\$FileName")
+    $Wc.Dispose()
 }
 
 # Function to add any .exe file to '%appdata%\Microsoft\Windows\Start Menu\Programs'
-function addToStartMenu {
+function AddToStartMenu {
     
-    param(
+    Param(
         [Parameter(Mandatory = $true)]
-        $target
+        $Target
     )
 
-    $startMenuProgramsFolder = "$ENV:AppData\Microsoft\Windows\Start Menu\Programs"
-    $fileName = [io.path]::GetFileNameWithoutExtension($target)
+    $StartMenuProgramsFolder = "$ENV:AppData\Microsoft\Windows\Start Menu\Programs"
+    $FileName = [io.path]::GetFileNameWithoutExtension($Target)
 
     $WshShell = New-Object -comObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut("$startMenuProgramsFolder\$fileName.lnk")
-    $Shortcut.TargetPath = $target
+    $Shortcut = $WshShell.CreateShortcut("$StartMenuProgramsFolder\$FileName.lnk")
+    $Shortcut.TargetPath = $Target
     $Shortcut.Save()
 }
 
 # Function to download and extract apps from Github
-function downloadAndExtractGithubApps {
+function DownloadAndExtractGithubApps {
     Write-Output "Preparing to download and extract github apps..."
     Start-Sleep -Seconds 2
 
     # Folder to temporarily download Github zip files in to be extracted later
-    $tempDownloadFolder = "C:\Temp\prepscriptDownloads\githubApps"
+    $TempDownloadFolder = "$ENV:Temp\win10prep\downloads\githubApps"
 
     # Folder to extract downloaded Github zip files into
-    $extractionFolder = "D:"
+    $ExtractionFolder = "D:"
+
+    # Switch for Hyper-V and actual installation
+    if (!(Test-Path $ExtractionFolder)) { $ExtractionFolder = "C:" }
 
     # Creating temporarily download folder
-    Write-Host "Creating temporary download folder '$tempDownloadFolder'..." -NoNewline
+    Write-Host "Creating temporary download folder '$TempDownloadFolder'..." -NoNewline
     Start-Sleep -Seconds 1
     New-Item -Path "$tempDownloadFolder" -ItemType Directory | Out-Null
     Write-Output " Done"
 
     # Downloading latest windows release for 'chaiNNer'
     Write-Host "Downloading chaiNNer from (chaiNNer-org/chaiNNer)..." -NoNewline
-    (downloadFile -url (getDownloadUrl -repo "chaiNNer-org/chaiNNer" -filter "windows-x64") -destination $tempDownloadFolder)
+    (downloadFile -Url (getDownloadUrl -Repo "chaiNNer-org/chaiNNer" -Filter "windows-x64") -Destination $TempDownloadFolder)
     Write-Output " Done"
 
     # Downloading latest windows release for 'Assist'
     Write-Host "Downloading Assist from (HeyM1ke/Assist)..." -NoNewline
-    (downloadFile -url (getDownloadUrl -repo "HeyM1ke/Assist" -filter "Assist.zip") -destination $tempDownloadFolder)
+    (downloadFile -Url (getDownloadUrl -Repo "HeyM1ke/Assist" -Filter "Assist.zip") -Destination $TempDownloadFolder)
+    Write-Output " Done"
+
+    Write-Host "Downloading Roblox FPS Unlocker from (axstin/rbxfpsunlocker)..." -NoNewline
+    (downloadFile -Url (GetDownloadUrl -Repo "axstin/rbxfpsunlocker" -Filter "x64.zip") -Destination $TempDownloadFolder)
     Write-Output " Done"
 
     Write-Output "Finished downloading zip files.`r`n"
 
     # Installing the Github zip files
-    $githubApps = Get-ChildItem $tempDownloadFolder
-    ForEach ($githubApp in $githubApps) {
-        $zippedFileName = $githubApp.Name
-        $zippedFilePath = "$tempDownloadFolder\$zippedFileName"
-        $unzippedFolderName = [io.path]::GetFileNameWithoutExtension($zippedFileName)
-        $unzippedFolderPath = "$extractionFolder\$unzippedFolderName"
+    $GithubApps = Get-ChildItem $TempDownloadFolder
+    ForEach ($GithubApp in $GithubApps) {
+        $ZippedFileName = $GithubApp.Name
+        $ZippedFilePath = "$TempDownloadFolder\$zippedFileName"
+        $UnzippedFolderName = [io.path]::GetFileNameWithoutExtension($ZippedFileName)
+        $UnzippedFolderPath = "$ExtractionFolder\$UnzippedFolderName"
 
-        # Extracting the files to '$extractionFolder'
-        Write-Host "Extracting '$zippedFileName' to '$unzippedFolderPath'..." -NoNewline
-        7z x $zippedFilePath -o"$unzippedFolderPath" | Out-Null
+        # Extracting the files to '$ExtractionFolder'
+        Write-Host "Extracting '$ZippedFileName' to '$UnzippedFolderPath'..." -NoNewline
+        7z x $ZippedFilePath -o"$UnzippedFolderPath" | Out-Null
         Write-Output " Done"
 
         # Adding first .exe found in extracted folder to '%appdata%\Microsoft\Windows\Start Menu\Programs'
-        ForEach ($file in (Get-ChildItem $unzippedFolderPath)) {
-            if ($file.Name.Contains('.exe')) {
-                Write-Host "Adding '$($file.FullName)' to start menu..." -NoNewline
-                addToStartMenu -target $file.FullName
+        ForEach ($File in (Get-ChildItem $UnzippedFolderPath)) {
+            if ($File.Name.Contains('.exe')) {
+                Write-Host "Adding '$($File.FullName)' to start menu..." -NoNewline
+                addToStartMenu -target $File.FullName
                 Write-Output " Done"
                 break
             }
@@ -223,19 +229,33 @@ function downloadAndExtractGithubApps {
 }
 
 # Function to run a seperate script with administrator privilages since some exe installers require that
-function downloadAndInstallExeFiles {
+function DownloadAndInstallExeFiles {
     Write-Host "Running Administrator level installer script..." -NoNewline
     Write-Host " Please do not close this window!" -ForegroundColor Yellow
-    Start-Sleep -Seconds 4
+    Start-Sleep -Seconds 2
     Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/adminInstaller.ps1") -Wait -Verb RunAs
     Write-Output "Finished downloading and installing EXE's.`r`n"
     Start-Sleep -Seconds 2
 }
 
-# downloadAndinstallScoopApps
-# downloadAndExtractGithubApps
-downloadAndInstallExeFiles
+function DeleteTempFolder {
+    $TempFolder = "$ENV:Temp\win10prep\downloads"
+    Write-Host "Deleting temporary dowload folder '$TempFolder'..." -NoNewline
+    Start-Sleep -Seconds 1
+    Remove-Item $TempFolder -Force
+    Write-Output " Done`r`n"
+}
+
+Start-Transcript "$ENV:Temp\win10prep\logs\installer.log" | Out-Null
+
+DownloadAndinstallScoopApps
+DownloadAndExtractGithubApps
+DownloadAndInstallExeFiles
+DeleteTempFolder
 
 Write-Output "Finished installing all apps. Exiting..."
 Start-Sleep -Seconds 2
+
+Stop-Transcript | Out-Null
+
 exit
