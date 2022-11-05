@@ -1,0 +1,53 @@
+// See https://TranslucentTB.github.io/config for more information
+{
+    "$schema": "https://sylveon.dev/TranslucentTB/schema",
+    "desktop_appearance": {
+        "accent": "clear",
+        "color": "#00000000",
+        "show_peek": false
+    },
+    "visible_window_appearance": {
+        "enabled": true,
+        "accent": "clear",
+        "color": "#00000000",
+        "show_peek": false
+    },
+    "maximized_window_appearance": {
+        "enabled": true,
+        "accent": "acrylic",
+        "color": "#00000000",
+        "show_peek": false
+    },
+    "start_opened_appearance": {
+        "enabled": true,
+        "accent": "clear",
+        "color": "#00000000",
+        "show_peek": false
+    },
+    "search_opened_appearance": {
+        "enabled": true,
+        "accent": "clear",
+        "color": "#00000000",
+        "show_peek": false
+    },
+    "task_view_opened_appearance": {
+        "enabled": true,
+        "accent": "clear",
+        "color": "#00000000",
+        "show_peek": false
+    },
+    "battery_saver_appearance": {
+        "enabled": false,
+        "accent": "opaque",
+        "color": "#00000000",
+        "show_peek": true
+    },
+    "ignored_windows": {
+        "window_class": [],
+        "window_title": [],
+        "process_name": []
+    },
+    "hide_tray": true,
+    "disable_saving": false,
+    "verbosity": "warn"
+}

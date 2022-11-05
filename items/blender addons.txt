@@ -1,0 +1,14 @@
+Extra objects for curve and mesh
+A.N.T.Landscape
+Archimesh
+Import Images as Planes
+Dynamic Sky
+Tri-Lighting
+LoopTools
+Node Wrangler
+Real Snow
+
+Download:
+- Blenderkit	 	(https://www.blenderkit.com/addon-download/)
+- HDRI Sun Aligner 	(akej74/hdri-sun-aligner) 	(.zip)
+- BlendPresence		(abrasic/blendpresence)		(blendpresence)

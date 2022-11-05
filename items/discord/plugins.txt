@@ -1,0 +1,16 @@
+With PluginRepo:
+- BetterAnimations
+- BetterAudioPlayer
+- BetterBotTags
+- BetterInvites
+- DoNotTrack
+- FileViewer
+- GameActivityToggle
+- HideUtils
+- ImageUtilities
+- NoSpotifyPause
+- SecretRingTone
+- ShowAllActivities
+- ShowBadgesInChat
+- SpotifyControls
+- ThemeRepo
