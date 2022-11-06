@@ -11,27 +11,19 @@ function EnableClipboardHistory {
 
 # Disables sticky keys
 function DisableStickyKeys {
+    # Object with format '$RegPath = $NewFlagValue'
     $RegEntries = @{
-        1 = @{
-            Path = "HKCU:\Control Panel\Accessibility\StickyKeys"
-            Flag = "506"
-        }
-        2 = @{
-            Path = "HKCU:\Control Panel\Accessibility\Keyboard Response"
-            Flag = "122"
-        }
-        3 = @{
-            Path = "HKCU:\Control Panel\Accessibility\ToggleKeys"
-            Flag = "58"
-        }
+        "HKCU:\Control Panel\Accessibility\StickyKeys"        = "506"
+        "HKCU:\Control Panel\Accessibility\Keyboard Response" = "122"
+        "HKCU:\Control Panel\Accessibility\ToggleKeys"        = "58"
     }
 
-    # Looping through the object and change 'Flags' string value for every path
+    # Looping through the object and changing 'Flags' string value for every path
     $RegEntries.Keys | ForEach-Object {
-        $RegPath = ($RegEntries.$_).Path
-        $Flag = ($RegEntries.$_).Flag
+        $RegPath = $_
+        $NewFlagValue = $RegEntries.$_
 
-        Set-Itemproperty -Path $RegPath -Name "Flags" -Value $Flag -Force -PassThru
+        Set-Itemproperty -Path $RegPath -Name "Flags" -Value $NewFlagValue -Force -PassThru
     }
 }
 
@@ -44,29 +36,26 @@ function EnableDarkMode {
 function ChangeAccentColor {
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent"
     $RegEntries = @{
-        1 = @{
-            Key   = "AccentColorMenu"
+        "AccentColorMenu" = @{
             Type  = "DWORD"
             Value = "0xff484a4c"
         }
-        2 = @{
-            Key   = "AccentPalette"
+        "AccentPalette"   = @{
             Type  = "BINARY"
             Value = "9b,9a,99,00,84,83,81,00,6d,6b,6a,00,4c,4a,48,00,36,35,33,00,26,25,24,00,19,19,19,00,10,7c,10,00"
         }
-        3 = @{
-            Key   = "StartColorMenu"
+        "StartColorMenu"  = @{
             Type  = "DWORD"
-            Value = "0xff333536"
-        } 
+            Value = "0xff484a4c"
+        }
     }
 
     $RegEntries.Keys | ForEach-Object {
-        $Key = ($RegEntries.$_).Key
+        $Key = $_
         $Type = ($RegEntries.$_).Type
         $Value = ($RegEntries.$_).Value
 
-        # Check for AccentPalette because it requires a byte array for a value. Change to correct hex format, then make it a byte array
+        # Special çheck for AccentPalette because it requires a byte array for a value. Changes it to correct hex format, then make it a byte array
         if ($Key -eq "AccentPalette") { $Value = [byte[]]($Value.Split(",") | ForEach-Object { "0x$_" }) }
         
         # Checking if registry entry exists or no
@@ -78,26 +67,26 @@ function ChangeAccentColor {
         }
     }
 
-    # Restarting explorer.exe to see changes made by this function
+    # Restarting explorer.exe to see changes
     Stop-Process -ProcessName explorer -Force -ErrorAction SilentlyContinue -PassThru
 }
 
 # Function that sets up power plan and disables auto-wake
 function SetupPowerPlan {
-    # Sets power plan to 'Ultimate Performance'
+    # Set power plan to 'Ultimate Performance'
     $PowerPlan = Get-CimInstance -Name root\cimv2\power -Class win32_PowerPlan -Filter "ElementName = 'Ultimate Performance'"      
     powercfg /setactive ([string]$PowerPlan.InstanceID).Replace("Microsoft:PowerPlan\{", "").Replace("}", "")
 
     # Get list of devices that can wake up your pc
     $WakeArmed = powercfg -devicequery wake_armed
 
-    # Check if there are any that can wake up your pc. If there are some, they will be disabled
+    # Check if there are devices that can wake up your pc. If there are some, they will be disabled
     if ($WakeArmed -ne "NONE") { 
         $WakeArmed | ForEach-Object { powercfg /devicedisablewake $_ } | Out-Null 
-        Write-Output "Removed all devices from 'powercfg -devicequery wake_armed' list"
+        Write-Host "Removed all devices from 'powercfg -devicequery wake_armed' list"
     }
 
-    # Sets the monitor timeout to 'never'
+    # Sets the power timeouts to 'never'
     powercfg -change -monitor-timeout-ac 0
     powercfg -change -monitor-timeout-dc 0
     powercfg -change -standby-timeout-ac 0
@@ -106,27 +95,23 @@ function SetupPowerPlan {
 
 # Enables file extensions and hidden files
 function EditExplorerSettings {
-    # TODO: Add drive names: 'nyoooom (C:)' and 'Haha storage go brr (D:)'
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
     $RegEntries = @{
-        1 = @{
-            Key   = "HideFileExt"
+        "HideFileExt" = @{
+            Type  = "DWORD"
             Value = "0"
-            Type  = "DWORD"
         }
-        2 = @{
-            Key   = "Hidden"
-            Value = "1"
+        "Hidden"      = @{
             Type  = "DWORD"
+            Value = "1"
         }
-        3 = @{
-            Key   = "LaunchTo"
-            Value = "1"
+        "LaunchTo"    = @{
             Type  = "DWORD"
+            Value = "1"
         }
     }
     $RegEntries.Keys | ForEach-Object {
-        $Key = ($RegEntries.$_).Key
+        $Key = $_
         $Value = ($RegEntries.$_).Value
         $Type = ($RegEntries.$_).Type
 
@@ -150,16 +135,14 @@ function EditExplorerSettings {
     
         # Changing drive labels to the ones defined in $DriveInfo
         if (Test-Path $DriveLetter) {
-            Write-Host "Changing label for '$DriveLetter' from '$($Drive.Label)' to '$DriveLabel'" -NoNewline
+            Write-Host "Changing label for '$DriveLetter' from '$($Drive.Label)' to '$DriveLabel' " -NoNewline
 
-            # Not using 'label.exe' due to quotes showing up in drive labels with spaces
+            # Not using 'label.exe' due to quotes showing up in drive labels with spaces when using 'label.exe' cmdlet
             $Drive = Get-WmiObject -Class win32_volume -Filter "DriveLetter = '$DriveLetter'"
-            Set-WmiInstance -input $Drive -Arguments @{ Label = $DriveLabel } | Out-Null
-            Write-Output " Done"
+            Set-WmiInstance -input $Drive -Arguments @{ Label = $DriveLabel }
+            Write-Host "Done"
         }
     }
-
-    Stop-Process -ProcessName explorer -Force -ErrorAction SilentlyContinue -PassThru
 }
 
 # Function to install and enable Breeze Obsiduan cursor pack

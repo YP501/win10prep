@@ -8,17 +8,14 @@ Manual Installation:
 - Office 365
 - Discord
 - Betterdiscord
-- Windows Terminal
-- Teams
 - Authy
-- chaiNNer upscale model (from 'configs folder' to 'D:\AiModels')
+- spicetify-cli         (iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex)
 
-Manual settings:
+Manual tweak:
 - Focus assist: off
 - Network settings: profile = private, IPv4 = on, IPv6 = off, Preferred DNS = 1.1.1.1, Alternate DNS = 1.0.0.1
 - Logitech G HUB -> DPI = 200, 500, 800 | Set up Clicker Macro toggle on G9 1ms interval
-- configs in folder
-- FireFox sync
+- FireFox sync login
 
 Folders and files to transfer over:
 For Haha storage go brrr (D:):

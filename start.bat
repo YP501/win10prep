@@ -1,0 +1,1 @@
+start Powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/main.ps1

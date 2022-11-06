@@ -41,7 +41,7 @@
     "alwaysShowTabs": false,
     "copyFormatting": "none",
     "copyOnSelect": false,
-    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+    "defaultProfile": "{02989bb7-e75e-4a0f-a23c-0f5e96c9e708}",
     "profiles": {
         "defaults": {
             "colorScheme": "Campbell",
@@ -53,6 +53,14 @@
             "useAcrylic": true
         },
         "list": [
+            {
+                "commandline": "\"%UserProfile%\\scoop\\shims\\pwsh.exe\"",
+                "guid": "{02989bb7-e75e-4a0f-a23c-0f5e96c9e708}",
+                "hidden": false,
+                "icon": "ms-appx:///ProfileIcons/pwsh.png",
+                "name": "PowerShell",
+                "startingDirectory": "%USERPROFILE%"
+            },
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -70,12 +78,6 @@
                 "hidden": false,
                 "name": "Azure Cloud Shell",
                 "source": "Windows.Terminal.Azure"
-            },
-            {
-                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
-                "hidden": false,
-                "name": "Git Bash",
-                "source": "Git"
             }
         ]
     },

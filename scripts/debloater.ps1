@@ -19,7 +19,10 @@ Else {
 
 Start-Transcript "$DebloatFolder\debloater.log"
 
+
+Write-Host "Adding 'PresentationCore' and 'PresentationFramework' assembly for MessageBoxes... " -NoNewline
 Add-Type -AssemblyName PresentationCore, PresentationFramework
+Write-Host "Done"
 
 Function DebloatAll {
     #Removes AppxPackages
@@ -38,83 +41,7 @@ Function DebloatAll {
     Get-AppxProvisionedPackage -Online | Where-Object { $_.PackageName -NotMatch $WhitelistedApps -and $_.PackageName -NotMatch $NonRemovable } | Remove-AppxProvisionedPackage -Online
 }
 
-Function DebloatBlacklist {
-
-    $Bloatware = @(
-
-        #Unnecessary Windows 10 AppX Apps
-        "Microsoft.BingNews"
-        "Microsoft.GetHelp"
-        "Microsoft.Getstarted"
-        "Microsoft.Messaging"
-        "Microsoft.Microsoft3DViewer"
-        "Microsoft.MicrosoftOfficeHub"
-        "Microsoft.MicrosoftSolitaireCollection"
-        "Microsoft.NetworkSpeedTest"
-        "Microsoft.News"
-        "Microsoft.Office.Lens"
-        "Microsoft.Office.OneNote"
-        "Microsoft.Office.Sway"
-        "Microsoft.OneConnect"
-        "Microsoft.People"
-        "Microsoft.Print3D"
-        "Microsoft.RemoteDesktop"
-        "Microsoft.SkypeApp"
-        "Microsoft.StorePurchaseApp"
-        "Microsoft.Office.Todo.List"
-        "Microsoft.Whiteboard"
-        "Microsoft.WindowsAlarms"
-        #"Microsoft.WindowsCamera"
-        "microsoft.windowscommunicationsapps"
-        "Microsoft.WindowsFeedbackHub"
-        "Microsoft.WindowsMaps"
-        "Microsoft.WindowsSoundRecorder"
-        "Microsoft.Xbox.TCUI"
-        "Microsoft.XboxApp"
-        "Microsoft.XboxGameOverlay"
-        "Microsoft.XboxIdentityProvider"
-        "Microsoft.XboxSpeechToTextOverlay"
-        "Microsoft.ZuneMusic"
-        "Microsoft.ZuneVideo"
-
-        #Sponsored Windows 10 AppX Apps
-        #Add sponsored/featured apps to remove in the "*AppName*" format
-        "*EclipseManager*"
-        "*ActiproSoftwareLLC*"
-        "*AdobeSystemsIncorporated.AdobePhotoshopExpress*"
-        "*Duolingo-LearnLanguagesforFree*"
-        "*PandoraMediaInc*"
-        "*CandyCrush*"
-        "*BubbleWitch3Saga*"
-        "*Wunderlist*"
-        "*Flipboard*"
-        "*Twitter*"
-        "*Facebook*"
-        "*Spotify*"
-        "*Minecraft*"
-        "*Royal Revolt*"
-        "*Sway*"
-        "*Speed Test*"
-        "*Dolby*"
-             
-        #Optional: Typically not removed but you can if you need to for some reason
-        #"*Microsoft.Advertising.Xaml_10.1712.5.0_x64__8wekyb3d8bbwe*"
-        #"*Microsoft.Advertising.Xaml_10.1712.5.0_x86__8wekyb3d8bbwe*"
-        #"*Microsoft.BingWeather*"
-        #"*Microsoft.MSPaint*"
-        #"*Microsoft.MicrosoftStickyNotes*"
-        #"*Microsoft.Windows.Photos*"
-        #"*Microsoft.WindowsCalculator*"
-        #"*Microsoft.WindowsStore*"
-    )
-    foreach ($Bloat in $Bloatware) {
-        Get-AppxPackage -Name $Bloat | Remove-AppxPackage
-        Get-AppxProvisionedPackage -Online | Where-Object DisplayName -like $Bloat | Remove-AppxProvisionedPackage -Online
-        Write-Output "Trying to remove $Bloat."
-    }
-}
-
-Function Remove-Keys {
+Function RemoveKeys {
         
     #These are the registry keys that it will delete.
             
@@ -158,7 +85,7 @@ Function Remove-Keys {
     }
 }
             
-Function Protect-Privacy {
+Function ProtectPrivacy {
             
     #Disables Windows Feedback Experience
     Write-Output "Disabling Windows Feedback Experience program"
@@ -320,27 +247,7 @@ Function DisableCortana {
     
 }
 
-Function EnableCortana {
-    Write-Host "Re-enabling Cortana"
-    $Cortana1 = "HKCU:\SOFTWARE\Microsoft\Personalization\Settings"
-    $Cortana2 = "HKCU:\SOFTWARE\Microsoft\InputPersonalization"
-    $Cortana3 = "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore"
-    If (!(Test-Path $Cortana1)) {
-        New-Item $Cortana1
-    }
-    Set-ItemProperty $Cortana1 AcceptedPrivacyPolicy -Value 1 
-    If (!(Test-Path $Cortana2)) {
-        New-Item $Cortana2
-    }
-    Set-ItemProperty $Cortana2 RestrictImplicitTextCollection -Value 0 
-    Set-ItemProperty $Cortana2 RestrictImplicitInkCollection -Value 0 
-    If (!(Test-Path $Cortana3)) {
-        New-Item $Cortana3
-    }
-    Set-ItemProperty $Cortana3 HarvestContacts -Value 1 
-}
-        
-Function Stop-EdgePDF {
+Function StopEdgePDF {
     
     #Stops edge from taking over as the default .PDF viewer    
     Write-Output "Stopping Edge from taking over as the default .PDF viewer"
@@ -383,50 +290,6 @@ Function CheckDMWService {
 
     If (Get-Service -Name dmwappushservice | Where-Object { $_.Status -eq "Stopped" }) {
         Start-Service -Name dmwappushservice
-    } 
-}
-    
-Function Enable-EdgePDF {
-    Write-Output "Setting Edge back to default"
-    $NoPDF = "HKCR:\.pdf"
-    $NoProgids = "HKCR:\.pdf\OpenWithProgids"
-    $NoWithList = "HKCR:\.pdf\OpenWithList"
-    #Sets edge back to default
-    If (Get-ItemProperty $NoPDF  NoOpenWith) {
-        Remove-ItemProperty $NoPDF  NoOpenWith
-    } 
-    If (Get-ItemProperty $NoPDF  NoStaticDefaultVerb) {
-        Remove-ItemProperty $NoPDF  NoStaticDefaultVerb 
-    }       
-    If (Get-ItemProperty $NoProgids  NoOpenWith) {
-        Remove-ItemProperty $NoProgids  NoOpenWith 
-    }        
-    If (Get-ItemProperty $NoProgids  NoStaticDefaultVerb) {
-        Remove-ItemProperty $NoProgids  NoStaticDefaultVerb 
-    }        
-    If (Get-ItemProperty $NoWithList  NoOpenWith) {
-        Remove-ItemProperty $NoWithList  NoOpenWith
-    }    
-    If (Get-ItemProperty $NoWithList  NoStaticDefaultVerb) {
-        Remove-ItemProperty $NoWithList  NoStaticDefaultVerb
-    }
-        
-    #Removes an underscore '_' from the Registry key for Edge
-    $Edge2 = "HKCR:\AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723_"
-    If (Test-Path $Edge2) {
-        Set-Item $Edge2 AppXd4nrz8ff68srnhf9t5a8sbjyar1cr723
-    }
-}
-
-Function FixWhitelistedApps {
-    
-    If (!(Get-AppxPackage -AllUsers | Select-Object Microsoft.Paint3D, Microsoft.WindowsCalculator, Microsoft.WindowsStore, Microsoft.Windows.Photos)) {
-    
-        #Credit to abulgatz for these 4 lines of code
-        Get-AppxPackage -allusers Microsoft.Paint3D | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
-        Get-AppxPackage -allusers Microsoft.WindowsCalculator | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
-        Get-AppxPackage -allusers Microsoft.WindowsStore | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" }
-        Get-AppxPackage -allusers Microsoft.Windows.Photos | ForEach-Object { Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml" } 
     } 
 }
 
@@ -627,21 +490,7 @@ Function Remove3dObjects {
     }
 }
 
-Function Restore3dObjects {
-    #Restores 3D Objects from the 'My Computer' submenu in explorer
-    Write-Host "Restoring 3D Objects from explorer 'My Computer' submenu"
-    $Objects32 = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
-    $Objects64 = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
-    If (!(Test-Path $Objects32)) {
-        New-Item $Objects32
-    }
-    If (!(Test-Path $Objects64)) {
-        New-Item $Objects64
-    }
-}
-
 #This will debloat Windows 10
-#Everything is specific prompt
 
 #Creates a "drive" to access the HKCR (HKEY_CLASSES_ROOT)
 Write-Host "Creating PSDrive 'HKCR' (HKEY_CLASSES_ROOT). This will be used for the duration of the script as it is necessary for the removal and modification of specific registry keys."
@@ -652,15 +501,11 @@ DebloatAll
 Write-Host "Bloatware removed."
 Start-Sleep 1
 Write-Host "Removing specific registry keys."
-Remove-Keys
+RemoveKeys
 Write-Host "Leftover bloatware registry keys removed."
 Start-Sleep 1
-Write-Host "Checking to see if any Whitelisted Apps were removed, and if so re-adding them."
-Start-Sleep 1
-FixWhitelistedApps
-Start-Sleep 1
 Write-Host "Disabling Cortana from search, disabling feedback to Microsoft, and disabling scheduled tasks that are considered to be telemetry or unnecessary."
-Protect-Privacy
+ProtectPrivacy
 Start-Sleep 1
 DisableCortana
 Write-Host "Cortana disabled and removed from search, feedback to Microsoft has been disabled, and scheduled tasks are disabled."
@@ -679,7 +524,7 @@ Write-Host "Removing 3D Objects from the 'My Computer' submenu in explorer"
 Remove3dObjects
 Start-Sleep 1
 
-Stop-EdgePDF
+StopEdgePDF
 UninstallOneDrive
 UnpinStart 
 

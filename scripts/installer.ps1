@@ -1,4 +1,8 @@
 function DownloadAndinstallScoopApps {
+    # Changing execution policy so that user can use cmdlets after running this script
+    Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlet afterwards"
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser | Out-Null
+    
     $ScoopApps = @(
         "7zip"
         "audacity"
@@ -15,55 +19,53 @@ function DownloadAndinstallScoopApps {
         "python"
         "qbittorrent-enhanced"
         "spotify"
+        "spicetify-cli"
         "translucenttb"
         "vlc"
         "BitstreamVeraSansMono-NF"
         "yarn"
+        "windows-terminal"
+        "pwsh"
+        "microsoft-teams"
+        "tinynvidiaupdatechecker"
     )
 
     # Installing scoop cmdlet
-    Write-Output "Checking if scoop is already installed..."
-    Start-Sleep -Seconds 1
+    Write-Host "Checking if scoop is already installed..."
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        Write-Output "Scoop is already installed. Skipping...`r`n"
+        Write-Host "Scoop is already installed. Skipping..."
     }
     else {
-        Write-Output "Scoop is not installed. Installing now."
+        Write-Host "Scoop is not installed. Installing now."
         Invoke-RestMethod get.scoop.sh | Invoke-Expression
-        Write-Output "`r`n"
     }
 
     $ScoopAppsDir = "$home\scoop\apps"
 
     # Installing git for getting scoop buckets
     scoop install git
-    Write-Output "`r`n"
 
     # Installing scoop buckets
     scoop bucket add nerd-fonts
-    Write-Output "`r`n"
     scoop bucket add extras
-    Write-Output "`r`n"
 
     # Installing the apps with scoop
     ForEach ($ScoopApp in $ScoopApps) {
         scoop install $ScoopApp
-        Write-Output "`r`n"
         
         # App specific scripts to run after installing the app
         switch ($ScoopApp) {
             "7zip" {
-                Write-Output "`r`nInstalling 7zip context menu registry entries..."
+                Write-Host "Importing 7zip context menu registry entries..."
                 Reg Import "$ScoopAppsDir\7zip\current\install-context.reg"
             }
             "vscode" {
-                Write-Output "`r`nInstalling vscode context menu registry entries..."
+                Write-Host "Importing vscode context menu registry entries..."
                 Reg Import "$ScoopAppsDir\vscode\current\install-associations.reg"
                 Reg Import "$ScoopAppsDir\vscode\current\install-context.reg"
 
                 # Installation of vscode extensions
-                Write-Output "`r`nPreparing installation of vscode extensions..."
-                Start-Sleep -Seconds 2
+                Write-Host "Installing vscode extensions."
                 $VscodeExtensions = @(
                     "christian-kohler.npm-intellisense"
                     "dbaeumer.vscode-eslint"
@@ -89,31 +91,25 @@ function DownloadAndinstallScoopApps {
                     "xuanzhi33.simple-calculator"
                     "zhuangtongfa.material-theme"
                 )
-
-                ForEach ($Extension in $VscodeExtensions) {
-                    Write-Host "Installing $Extension..." -NoNewline
-                    code --install-extension $Extension | Out-Null
-                    Write-Output " Done"
+                $VscodeExtensions | ForEach-Object {
+                    code --install-extension $_
                 }
-                Write-Output "`r`n"
             }
             "firefox" {
-                # Opens a window which lets you set the 'scoop profile' to the default firefox profile to not lose data over updates
+                # Opens a window which lets you set the 'scoop profile' to the default firefox profile to not lose data when updating firefox with scoop
                 firefox -P
             }
             "python" {
-                Write-Output "`r`nInstalling python registry entries..."
+                Write-Host "Importing python registry entries..."
                 Reg Import "$ScoopAppsDir\python\current\install-pep-514.reg"
             }
         }
     }
-
-    Write-Output "Finished installing apps with scoop.`r`n"
-    Start-Sleep -Seconds 3
+    Write-Host "Finished installing apps with scoop."
 }
 
 # Function to get the latest release download URL with a filter from a Github repository
-function GetDownloadUrl {
+function GetGithubDownloadUrl {
 
     param(
         [parameter(Mandatory = $true)]
@@ -148,7 +144,7 @@ function downloadFile {
     $Wc.Dispose()
 }
 
-# Function to add any .exe file to '%appdata%\Microsoft\Windows\Start Menu\Programs'
+# Function to add .exe file to '%appdata%\Microsoft\Windows\Start Menu\Programs'
 function AddToStartMenu {
     
     Param(
@@ -167,8 +163,7 @@ function AddToStartMenu {
 
 # Function to download and extract apps from Github
 function DownloadAndExtractGithubApps {
-    Write-Output "Preparing to download and extract github apps..."
-    Start-Sleep -Seconds 2
+    Write-Host "Preparing to download and extract github apps..."
 
     # Folder to temporarily download Github zip files in to be extracted later
     $TempDownloadFolder = "$ENV:Temp\win10prep\downloads\githubApps"
@@ -176,30 +171,28 @@ function DownloadAndExtractGithubApps {
     # Folder to extract downloaded Github zip files into
     $ExtractionFolder = "D:"
 
-    # Switch for Hyper-V and actual installation
+    # Switch for Hyper-V testing and actual installation
     if (!(Test-Path $ExtractionFolder)) { $ExtractionFolder = "C:" }
 
     # Creating temporarily download folder
-    Write-Host "Creating temporary download folder '$TempDownloadFolder'..." -NoNewline
-    Start-Sleep -Seconds 1
-    New-Item -Path "$tempDownloadFolder" -ItemType Directory | Out-Null
-    Write-Output " Done"
+    Write-Host "Creating temporary download folder '$TempDownloadFolder'..."
+    New-Item -Path "$tempDownloadFolder" -ItemType Directory
 
     # Downloading latest windows release for 'chaiNNer'
-    Write-Host "Downloading chaiNNer from (chaiNNer-org/chaiNNer)..." -NoNewline
-    (downloadFile -Url (getDownloadUrl -Repo "chaiNNer-org/chaiNNer" -Filter "windows-x64") -Destination $TempDownloadFolder)
-    Write-Output " Done"
+    Write-Host "Downloading chaiNNer from (chaiNNer-org/chaiNNer)... " -NoNewline
+    (downloadFile -Url (GetGithubDownloadUrl -Repo "chaiNNer-org/chaiNNer" -Filter "windows-x64") -Destination $TempDownloadFolder)
+    Write-Host "Done"
 
     # Downloading latest windows release for 'Assist'
-    Write-Host "Downloading Assist from (HeyM1ke/Assist)..." -NoNewline
-    (downloadFile -Url (getDownloadUrl -Repo "HeyM1ke/Assist" -Filter "Assist.zip") -Destination $TempDownloadFolder)
-    Write-Output " Done"
+    Write-Host "Downloading Assist from (HeyM1ke/Assist)... " -NoNewline
+    (downloadFile -Url (GetGithubDownloadUrl -Repo "HeyM1ke/Assist" -Filter "Assist.zip") -Destination $TempDownloadFolder)
+    Write-Host "Done"
 
-    Write-Host "Downloading Roblox FPS Unlocker from (axstin/rbxfpsunlocker)..." -NoNewline
-    (downloadFile -Url (GetDownloadUrl -Repo "axstin/rbxfpsunlocker" -Filter "x64.zip") -Destination $TempDownloadFolder)
-    Write-Output " Done"
+    Write-Host "Downloading Roblox FPS Unlocker from (axstin/rbxfpsunlocker)... " -NoNewline
+    (downloadFile -Url (GetGithubDownloadUrl -Repo "axstin/rbxfpsunlocker" -Filter "x64.zip") -Destination $TempDownloadFolder)
+    Write-Host "Done"
 
-    Write-Output "Finished downloading zip files.`r`n"
+    Write-Host "Finished downloading Github zip files."
 
     # Installing the Github zip files
     $GithubApps = Get-ChildItem $TempDownloadFolder
@@ -210,52 +203,76 @@ function DownloadAndExtractGithubApps {
         $UnzippedFolderPath = "$ExtractionFolder\$UnzippedFolderName"
 
         # Extracting the files to '$ExtractionFolder'
-        Write-Host "Extracting '$ZippedFileName' to '$UnzippedFolderPath'..." -NoNewline
-        7z x $ZippedFilePath -o"$UnzippedFolderPath" | Out-Null
-        Write-Output " Done"
+        Write-Host "Extracting '$ZippedFileName' to '$UnzippedFolderPath'..."
+        7z x $ZippedFilePath -o"$UnzippedFolderPath"
 
         # Adding first .exe found in extracted folder to '%appdata%\Microsoft\Windows\Start Menu\Programs'
-        ForEach ($File in (Get-ChildItem $UnzippedFolderPath)) {
-            if ($File.Name.Contains('.exe')) {
-                Write-Host "Adding '$($File.FullName)' to start menu..." -NoNewline
-                addToStartMenu -target $File.FullName
-                Write-Output " Done"
+        $UnzippedFiles = Get-ChildItem $UnzippedFolderPath
+        $UnzippedFiles | ForEach-Object {
+            if ($_.Name.Contains(".exe")) {
+                Write-Host "Adding '$($_.FullName)' to start menu... " -NoNewline
+                addToStartMenu -target $_.FullName
+                Write-Host "Done"
                 break
             }
         }
     }
-    Write-Output "`r`nFinished downloading and extracing apps from github.`r`n`r`n"
-    Start-Sleep -Seconds 2
+    Write-Host "Finished downloading and extracing apps from github."
 }
 
 # Function to run a seperate script with administrator privilages since some exe installers require that
 function DownloadAndInstallExeFiles {
-    Write-Host "Running Administrator level installer script..." -NoNewline
-    Write-Host " Please do not close this window!" -ForegroundColor Yellow
-    Start-Sleep -Seconds 2
-    Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/adminInstaller.ps1") -Wait -Verb RunAs
-    Write-Output "Finished downloading and installing EXE's.`r`n"
-    Start-Sleep -Seconds 2
+    # Installing PresentationCore and PresentationFramework to be able to display MessageBoxes
+    Write-Host "Adding 'PresentationCore' and 'PresentationFramework' assembly for MessageBoxes... " -NoNewline
+    Add-Type -AssemblyName PresentationCore, PresentationFramework
+    Write-Host "Done"
+
+    # List with URLs to direct downloads
+    $DownloadUrls = @(
+        "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe"
+        "https://app.prntscr.com/build/setup-lightshot.exe"
+        "https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe"
+        "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+    )
+
+    # Creating the temporary installation folder
+    $TempDownloadFolder = "$ENV:Temp\win10prep\downloads\executables"
+    Write-Host "Creating temporary download folder '$TempDownloadFolder'..."
+    New-Item -Path "$TempDownloadFolder" -ItemType Directory
+
+    # Goes through the DownloadUrls list and downloads the files the URLs point to into '$ENV:Temp\win10prepDownloads\executables'
+    ForEach ($DownloadUrl in $DownloadUrls) {
+        Write-Host "Downloading from '$DownloadUrl'... " -NoNewline
+        downloadFile -Url $DownloadUrl -Destination $TempDownloadFolder
+        Write-Host "Done"
+    }
+    Write-Host "Finished downloading installers."
+    
+    # Running the installed files in '$ENV:Temp\win10prepDownloads\executables'
+    [Windows.MessageBox]::Show("REMINDER: If the app has finished installing and the is script stuck, terminate the process in the system tray!", "Installer notice", [Windows.MessageBoxButton]::OK, [Windows.MessageBoxImage]::Warning) | Out-Null
+    Write-Warning "If the installer has finished and the script is stuck, terminate the running process in the system tray in order to continue!"
+    Get-ChildItem -Path $TempDownloadFolder -File "*.exe" | ForEach-Object {
+        Write-Host "Running '$($_.FullName)'"
+        Start-Process -Wait -FilePath $_.FullName
+    }
+    Write-Host "Finished downloading and installing EXE's."
 }
 
-function DeleteTempFolder {
+function DeleteTempDownloadFolder {
     $TempFolder = "$ENV:Temp\win10prep\downloads"
-    Write-Host "Deleting temporary dowload folder '$TempFolder'..." -NoNewline
-    Start-Sleep -Seconds 1
+    Write-Host "Deleting temporary dowload folder '$TempFolder'... " -NoNewline
     Remove-Item $TempFolder -Force
-    Write-Output " Done`r`n"
+    Write-Host "Done"
 }
 
 Start-Transcript "$ENV:Temp\win10prep\logs\installer.log" | Out-Null
 
+DownloadAndInstallExeFiles
 DownloadAndinstallScoopApps
 DownloadAndExtractGithubApps
-DownloadAndInstallExeFiles
-DeleteTempFolder
+DeleteTempDownloadFolder
 
-Write-Output "Finished installing all apps. Exiting..."
-Start-Sleep -Seconds 2
+Write-Host "Finished installing. Exiting..."
 
 Stop-Transcript | Out-Null
-
 exit
