@@ -60,7 +60,6 @@ For Haha storage go brrr (D:):
     - ThemeRepo
     Themes (from folder)
 
-TODO: Check if these 2 are pinnable with powershell
 Taskbar order:
 1. Explorer
 2. Firefox
