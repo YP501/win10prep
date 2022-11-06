@@ -49,7 +49,7 @@ There are three scripts bundled with this preparation bundle:
 1. A windows debloater
 2. An application installer
 3. A windows settings tweaker
-4. A config file setter
+4. An app configurator
 "@
     Write-Host "`r`n"
 
@@ -91,6 +91,19 @@ There are three scripts bundled with this preparation bundle:
         Write-Host "Skipped windows settings tweaker."
     }
     Write-Host  "`r`n"
+
+    # Whether or not the user wants to run the app configurator
+    $Choice = (Read-Host -Prompt "Would you like to run the app configurator? (y/n)").ToLower()
+    if ($Choice.Contains("y")) {
+        Write-Host "Running app configurator... " -NoNewline
+        Write-Warning "Do not close this window!"
+        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/appConfigurator.ps1") -Wait -Verb RunAs
+        Write-Host "Finished configuring apps."
+    }
+    else {
+        Write-Host "Skipped app configurator."
+    }
+    Write-Host "`r`n"
 
     Write-Host "The windows 10 preparation script has finished successfully!" -ForegroundColor Green
     Stop-Transcript | Out-Null

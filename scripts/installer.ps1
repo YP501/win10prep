@@ -1,7 +1,7 @@
 function DownloadAndinstallScoopApps {
     # Changing execution policy so that user can use cmdlets after running this script
     Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlet afterwards"
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser | Out-Null
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     
     $ScoopApps = @(
         "7zip"
@@ -65,11 +65,9 @@ function DownloadAndinstallScoopApps {
                 Reg Import "$ScoopAppsDir\vscode\current\install-context.reg"
 
                 # Installation of vscode extensions
-                Write-Host "Installing vscode extensions."
                 $VscodeExtensions = @(
                     "christian-kohler.npm-intellisense"
                     "dbaeumer.vscode-eslint"
-                    "dbankier.vscode-quick-select"
                     "eamodio.gitlens"
                     "esbenp.prettier-vscode"
                     "formulahendry.code-runner"
@@ -92,7 +90,9 @@ function DownloadAndinstallScoopApps {
                     "zhuangtongfa.material-theme"
                 )
                 $VscodeExtensions | ForEach-Object {
-                    code --install-extension $_
+                    Write-Host "Installing extension $_... " -NoNewline
+                    code --install-extension $_ | Out-Null
+                    Write-Host "Done"
                 }
             }
             "firefox" {
@@ -102,6 +102,15 @@ function DownloadAndinstallScoopApps {
             "python" {
                 Write-Host "Importing python registry entries..."
                 Reg Import "$ScoopAppsDir\python\current\install-pep-514.reg"
+            }
+            "windows-terminal" {
+                Write-Host "Importing windows-terminal registry entries..."
+                Reg Import "$ScoopAppsDir\windows-terminal\current\install-context.reg"
+            }
+            "pwsh" {
+                Write-Host "Importing pwsh registry entries..."
+                Reg Import "$ScoopAppsDir\pwsh\current\install-explorer-context.reg"\
+                Reg Import "$ScoopAppsDir\pwsh\current\install-file-context.reg"
             }
         }
     }
@@ -261,15 +270,15 @@ function DownloadAndInstallExeFiles {
 function DeleteTempDownloadFolder {
     $TempFolder = "$ENV:Temp\win10prep\downloads"
     Write-Host "Deleting temporary dowload folder '$TempFolder'... " -NoNewline
-    Remove-Item $TempFolder -Force
+    Remove-Item $TempFolder -Force -Confirm:$false -Recurse
     Write-Host "Done"
 }
 
 Start-Transcript "$ENV:Temp\win10prep\logs\installer.log" | Out-Null
 
-DownloadAndInstallExeFiles
 DownloadAndinstallScoopApps
 DownloadAndExtractGithubApps
+DownloadAndInstallExeFiles
 DeleteTempDownloadFolder
 
 Write-Host "Finished installing. Exiting..."

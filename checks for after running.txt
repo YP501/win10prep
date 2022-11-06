@@ -60,6 +60,7 @@ For Haha storage go brrr (D:):
     - ThemeRepo
     Themes (from folder)
 
+TODO: Check if these 2 are pinnable with powershell
 Taskbar order:
 1. Explorer
 2. Firefox
@@ -75,6 +76,7 @@ Taskbar order:
 12. MongoDB Atlas
 13. Dolby access
 
+https://stackoverflow.com/questions/30051634/is-it-possible-programmatically-add-folders-to-the-windows-10-quick-access-panel
 Explorer pinned order:
 1. Desktop
 2. Downloads

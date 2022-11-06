@@ -148,7 +148,7 @@ function EditExplorerSettings {
 # Function to install and enable Breeze Obsiduan cursor pack
 function InstallCustomCursor {
     # Defining paths for cursors
-    $DefaultPath = "$(Split-Path "$PSScriptRoot" -Parent)\items\cursors"
+    $DefaultPath = "$(Split-Path "$PSScriptRoot")\items\cursors"
     $Dest = "$ENV:SystemRoot\Cursors"
     $RegPath = "HKCU:\Control Panel\Cursors"
 
@@ -189,6 +189,11 @@ function InstallCustomCursor {
     }
 }
 
+function RenameRecycleBin {
+    $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CLSID\{645FF040-5081-101B-9F08-00AA002F954E}"
+    Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "The Bruh Basket™" -Force -PassThru
+}
+
 Start-Transcript "$ENV:Temp\win10prep\logs\settingsTweaker.log" | Out-Null
 
 EnableClipboardHistory
@@ -198,5 +203,6 @@ ChangeAccentColor
 SetupPowerPlan
 EditExplorerSettings
 InstallCustomCursor
+RenameRecycleBin
 
 Stop-Transcript | Out-Null

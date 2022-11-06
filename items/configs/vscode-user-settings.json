@@ -1,6 +1,5 @@
 {
     "workbench.iconTheme": "material-icon-theme",
-    "terminal.integrated.defaultProfile.windows": "PowerShell",
     "explorer.confirmDragAndDrop": false,
     "editor.unicodeHighlight.nonBasicASCII": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
@@ -12,7 +11,7 @@
     "editor.fontSize": 13.5,
     "editor.renderWhitespace": "all",
     "vscord.status.button.enabled": true,
-    "terminal.integrated.gpuAcceleration": "off",
+    "terminal.integrated.gpuAcceleration": "on",
     "prettier.singleQuote": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "prettier.tabWidth": 4,
@@ -31,5 +30,12 @@
     "workbench.colorTheme": "One Dark Pro Darker",
     "[powershell]": {
         "editor.defaultFormatter": "ms-vscode.powershell"
-    }
+    },
+    "terminal.integrated.profiles.windows": {
+        "pwsh": {
+            "path": "${env:userprofile}/scoop/apps/pwsh/current/pwsh.exe",
+            "icon": "terminal-powershell"
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "pwsh"
 }
