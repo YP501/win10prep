@@ -15,7 +15,7 @@ Start-Sleep -Seconds 1
 Start-Transcript "$LogFolder\main.log" | Out-Null
 
 Write-Output @"
-There are three scripts bundled with this preperation bundle:
+There are three scripts bundled with this preparation bundle:
 1. A windows debloater
 2. An application installer
 3. A windows settings tweaker
