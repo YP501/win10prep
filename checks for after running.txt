@@ -10,10 +10,10 @@ Manual Installation:
 - Betterdiscord
 
 Manual tweak:
-- Focus assist: off
+- Focus assist: everything set to off
 - Network settings: profile = private, IPv4 = on, IPv6 = off, Preferred DNS = 1.1.1.1, Alternate DNS = 1.0.0.1
 - Logitech G HUB -> DPI = 200, 500, 800 | Set up Clicker Macro toggle on G9 1ms interval
-- FireFox sync login
+- FireFox sync login, browser.tabs.loadBookmarksInBackground = true
 
 Folders and files to transfer over:
 For Haha storage go brrr (D:):

@@ -1,3 +1,8 @@
+<# 
+    ⚠ ORIGINAL SCRIPT NOT MADE BY ME:
+    ⚠ SOURCE: 'https://github.com/Sycnex/Windows10Debloater/blob/master/Windows10DebloaterGUI.ps1'
+#>
+
 #Unnecessary Windows 10 AppX apps that will be removed by the blacklist.
 $global:Bloatware = @(
     "Microsoft.PPIProjection"
