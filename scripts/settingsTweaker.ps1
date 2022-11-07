@@ -27,11 +27,6 @@ function DisableStickyKeys {
     }
 }
 
-# Enables dark mode in apps
-function EnableDarkMode {
-    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name AppsUseLightTheme -Value 0 -Force -PassThru
-}
-
 # Changes windows accent color
 function ChangeAccentColor {
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent"
@@ -94,7 +89,7 @@ function SetupPowerPlan {
 }
 
 # Enables file extensions and hidden files
-function EditExplorerSettings {
+function SetExplorerSettings {
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
     $RegEntries = @{
         "HideFileExt" = @{
@@ -154,7 +149,7 @@ function InstallCustomCursor {
 
     # Copying cursors from '$DefaultPath' to '$Dest'
     Get-ChildItem -Path $DefaultPath -Recurse -File | Copy-Item -Destination $Dest -PassThru
-
+    
     # Defining RegEntries for cursors
     $RegEntries = @{
         "(Default)"   = "Breeze Obsidian"
@@ -181,7 +176,7 @@ function InstallCustomCursor {
         $Value = $RegEntries.$_
         $FullPath = "$Dest\$Value"
 
-        # Check for '(Default)' so that it gets a different value
+        # Check for '(Default)' so that it gets a different value without the full cursor path since it doesnt need it
         if ($Key -eq "(Default)") { $FullPath = $Value }
 
         # Set registry entries in order to change cursor (requires restart to apply)
@@ -189,20 +184,19 @@ function InstallCustomCursor {
     }
 }
 
+# Rename the recycle bin
 function RenameRecycleBin {
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CLSID\{645FF040-5081-101B-9F08-00AA002F954E}"
-    Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "The Bruh Basket™" -Force -PassThru
+    Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "The Bruh Basket$([char]0x2122)" -Force -PassThru
 }
 
-Start-Transcript "$ENV:Temp\win10prep\logs\settingsTweaker.log" | Out-Null
-
+Start-Transcript "$(Split-Path $PSScriptRoot)\logs\settingsTweaker.log" | Out-Null
 EnableClipboardHistory
 DisableStickyKeys
-EnableDarkMode
 ChangeAccentColor
 SetupPowerPlan
-EditExplorerSettings
+SetExplorerSettings
 InstallCustomCursor
 RenameRecycleBin
-
+Write-Host "Finished tweaking settings. Exiting..."
 Stop-Transcript | Out-Null

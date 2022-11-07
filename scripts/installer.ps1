@@ -1,7 +1,7 @@
 function DownloadAndinstallScoopApps {
     # Changing execution policy so that user can use cmdlets after running this script
     Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlet afterwards"
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+    try { Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force -ErrorAction SilentlyContinue } catch { }
     
     $ScoopApps = @(
         "7zip"
@@ -217,10 +217,10 @@ function DownloadAndExtractGithubApps {
 
         # Adding first .exe found in extracted folder to '%appdata%\Microsoft\Windows\Start Menu\Programs'
         $UnzippedFiles = Get-ChildItem $UnzippedFolderPath
-        $UnzippedFiles | ForEach-Object {
-            if ($_.Name.Contains(".exe")) {
-                Write-Host "Adding '$($_.FullName)' to start menu... " -NoNewline
-                addToStartMenu -target $_.FullName
+        ForEach ($File in $UnzippedFiles) {
+            if ($File.Name.Contains(".exe")) {
+                Write-Host "Adding '$($File.FullName)' to start menu... " -NoNewline
+                addToStartMenu -target $File.FullName
                 Write-Host "Done"
                 break
             }
@@ -259,7 +259,7 @@ function DownloadAndInstallExeFiles {
     
     # Running the installed files in '$ENV:Temp\win10prepDownloads\executables'
     [Windows.MessageBox]::Show("REMINDER: If the app has finished installing and the is script stuck, terminate the process in the system tray!", "Installer notice", [Windows.MessageBoxButton]::OK, [Windows.MessageBoxImage]::Warning) | Out-Null
-    Write-Warning "If the installer has finished and the script is stuck, terminate the running process in the system tray in order to continue!"
+    Write-Warning "The script might take a while to catch up after you terminate the process!"
     Get-ChildItem -Path $TempDownloadFolder -File "*.exe" | ForEach-Object {
         Write-Host "Running '$($_.FullName)'"
         Start-Process -Wait -FilePath $_.FullName
@@ -267,21 +267,16 @@ function DownloadAndInstallExeFiles {
     Write-Host "Finished downloading and installing EXE's."
 }
 
-function DeleteTempDownloadFolder {
-    $TempFolder = "$ENV:Temp\win10prep\downloads"
+function DeleteTempDownloads {
+    $TempFolder = "$ENV:Temp\win10prep"
     Write-Host "Deleting temporary dowload folder '$TempFolder'... " -NoNewline
-    Remove-Item $TempFolder -Force -Confirm:$false -Recurse
+    # Remove-Item $TempFolder -Force -Confirm:$false -Recurse
+    Remove-Item $TempFolder -Force -Recurse
     Write-Host "Done"
 }
-
-Start-Transcript "$ENV:Temp\win10prep\logs\installer.log" | Out-Null
 
 DownloadAndinstallScoopApps
 DownloadAndExtractGithubApps
 DownloadAndInstallExeFiles
 DeleteTempDownloadFolder
-
-Write-Host "Finished installing. Exiting..."
-
-Stop-Transcript | Out-Null
 exit

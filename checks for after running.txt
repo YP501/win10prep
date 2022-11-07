@@ -1,15 +1,13 @@
 Manual Installation:
+- Discord
 - Adobe Photoshop       (qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Adobe Premiere Pro 	(qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Dolby Access
 - Medal
 - OneDrive
-- Nvidia GeForce Experience
 - Office 365
-- Discord
-- Betterdiscord
-- Authy
 - spicetify-cli         (iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex)
+- Betterdiscord
 
 Manual tweak:
 - Focus assist: off
@@ -75,7 +73,6 @@ Taskbar order:
 12. MongoDB Atlas
 13. Dolby access
 
-https://stackoverflow.com/questions/30051634/is-it-possible-programmatically-add-folders-to-the-windows-10-quick-access-panel
 Explorer pinned order:
 1. Desktop
 2. Downloads

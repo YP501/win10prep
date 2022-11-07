@@ -2,38 +2,32 @@
 $ErrorActionPreference = 'silentlycontinue'
 
 # Checks if log folder exists, if not it creates one
-function CheckLogFolder {
-    $LogFolder = "$ENV:Temp\win10prep\logs"
-    If (Test-Path $LogFolder) {
-        Write-Host "$LogFolder exists. Skipping."
-    }
-    Else {
-        Write-Host "The folder '$LogFolder' doesn't exist. Creating now."
-        New-Item -Path "$LogFolder" -ItemType Directory
-    }
+$LogFolder = "$(Split-Path $PSScriptRoot)\logs"
+If (Test-Path $LogFolder) {
+    Write-Host "$LogFolder exists. Skipping."
 }
-function CheckInternet {
-    # Check if user has internet connection
-    Write-Host "Checking internet connection..."
-    $Connected = Get-NetRoute | Where-Object DestinationPrefix -eq '0.0.0.0/0' | Get-NetIPInterface | Where-Object ConnectionState -eq 'Connected'
-    if ($null -eq $Connected) {
-        Write-Error "You must be connected to the internet in order to use this script!" -Category ObjectNotFound
-        Read-Host -Prompt "Press any key to continue..."
-        exit
-    }
-    else {
-        Write-Host "User has internet connection. Continuing..."
-    }
-    Write-Host "`r`n"
+Else {
+    Write-Host "The folder '$LogFolder' doesn't exist. Creating now."
+    New-Item -Path "$LogFolder" -ItemType Directory
 }
 
-# Main function which loads a debloater, installer and a settings changer
+
+# Check if user has internet connection
+Write-Host "Checking internet connection..."
+$Connected = Get-NetRoute | Where-Object DestinationPrefix -eq '0.0.0.0/0' | Get-NetIPInterface | Where-Object ConnectionState -eq 'Connected'
+if ($null -eq $Connected) {
+    Write-Error "You must be connected to the internet in order to use this script!" -Category ObjectNotFound
+    Read-Host -Prompt "Press any key to continue..."
+    exit
+}
+else {
+    Write-Host "User has internet connection. Continuing..."
+}
+Write-Host "`r`n"
+
+
+# Main function which loads a debloater, installer, settings changer and app config setter after everything is ready
 function Main {
-    # Run checks
-    CheckLogFolder
-    CheckInternet
-
-    # Runs if everything is ready
     Write-Host @"
 ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗
 ██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝
@@ -46,7 +40,7 @@ function Main {
 
     Write-Host @"
 There are three scripts bundled with this preparation bundle:
-1. A windows debloater
+1. A windows debloater GUI
 2. An application installer
 3. A windows settings tweaker
 4. An app configurator
@@ -54,15 +48,15 @@ There are three scripts bundled with this preparation bundle:
     Write-Host "`r`n"
 
     # Whether the user wants to run the debloater or no
-    $Choice = (Read-Host -Prompt "Would you like to run the Windows Debloater? (requires administrator privileges) (y/n)").ToLower()
+    $Choice = (Read-Host -Prompt "Would you like to run the Windows Debloater GUI? (requires administrator privileges) (y/n)").ToLower()
     if ($Choice.Contains("y")) {
-        Write-Host "Running debloater... " -NoNewline
+        Write-Host "Running debloater GUI... " -NoNewline
         Write-Warning "Do not close this window!"
         Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/debloater.ps1") -Wait -Verb RunAs
-        Write-Host "Finished debloating."
+        Write-Host "Closed debloater GUI."
     }
     else {
-        Write-Host "Skipped debloater."
+        Write-Host "Skipped debloater GUI."
     }
     Write-Host "`r`n"
 
@@ -71,7 +65,7 @@ There are three scripts bundled with this preparation bundle:
     if ($Choice.Contains("y")) {
         Write-Host "Running application installer... " -NoNewline
         Write-Warning "Do not close this window!"
-        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/installer.ps1") -Wait
+        Start-Process powershell.exe -NoNewWindow -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/installer.ps1") -Wait
         Write-Host "Finished installing applications."
     }
     else {
@@ -97,7 +91,7 @@ There are three scripts bundled with this preparation bundle:
     if ($Choice.Contains("y")) {
         Write-Host "Running app configurator... " -NoNewline
         Write-Warning "Do not close this window!"
-        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/appConfigurator.ps1") -Wait -Verb RunAs
+        Start-Process powershell.exe -NoNewWindow -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/appConfigurator.ps1") -Wait
         Write-Host "Finished configuring apps."
     }
     else {
@@ -106,8 +100,9 @@ There are three scripts bundled with this preparation bundle:
     Write-Host "`r`n"
 
     Write-Host "The windows 10 preparation script has finished successfully!" -ForegroundColor Green
+
     Stop-Transcript | Out-Null
-    Write-Host "A folder with logs can be found at '$ENV:Temp\win10prep\logs'" -ForegroundColor Yellow
+    Write-Host "Logs can be found at '$(Split-Path $PSScriptRoot)\logs'" -ForegroundColor Yellow
     Write-Host "`r`n"
     
     # Ask if the user wants to reboot
@@ -116,7 +111,6 @@ There are three scripts bundled with this preparation bundle:
         Restart-Computer -Force
     }
 }
-
-Start-Transcript "$LogFolder\main.log" | Out-Null
+Start-Transcript "$(Split-Path $PSScriptRoot)\logs\main.log" | Out-Null
 Main
-# Stop-Transcript gets called at end of main function
+# 'Stop-Transcript' gets called at end of main function due to reboot
