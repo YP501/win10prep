@@ -26,7 +26,7 @@ else {
 Write-Host "`r`n"
 
 
-# Main function which loads a debloater, installer, settings changer and app config setter after everything is ready
+# Main function which loads  scripts
 function Main {
     Write-Host @"
 ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗
@@ -40,24 +40,10 @@ function Main {
 
     Write-Host @"
 There are three scripts bundled with this preparation bundle:
-1. A windows debloater GUI
-2. An application installer
-3. A windows settings tweaker
-4. An app configurator
+1. An application installer
+2. A windows settings tweaker
+3. An app configurator
 "@
-    Write-Host "`r`n"
-
-    # Whether the user wants to run the debloater or no
-    $Choice = (Read-Host -Prompt "Would you like to run the Windows Debloater GUI? (requires administrator privileges) (y/n)").ToLower()
-    if ($Choice.Contains("y")) {
-        Write-Host "Running debloater GUI... " -NoNewline
-        Write-Warning "Do not close this window!"
-        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/debloater.ps1") -Wait -Verb RunAs
-        Write-Host "Closed debloater GUI."
-    }
-    else {
-        Write-Host "Skipped debloater GUI."
-    }
     Write-Host "`r`n"
 
     # Whether the user wants to run the app installer or no

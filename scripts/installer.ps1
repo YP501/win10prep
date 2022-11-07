@@ -1,10 +1,10 @@
+# TODO: Change pwsh module installation to Install-Module instead of scoop
 function DownloadAndinstallScoopApps {
     # Changing execution policy so that user can use cmdlets after running this script
-    Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlet afterwards"
+    Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlets afterwards"
     try { Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force -ErrorAction SilentlyContinue } catch { }
     
     $ScoopApps = @(
-        "7zip"
         "audacity"
         "blender"
         "filezilla"
@@ -115,6 +115,21 @@ function DownloadAndinstallScoopApps {
         }
     }
     Write-Host "Finished installing apps with scoop."
+}
+
+# Installing powershell modules that can't be done with scoop or break when downloaded by scoop (im looking at you PSReadline >:c)
+function InstallPwshModules {
+    # oh-my-posh and terminal-icons get installed by scoop
+    $ModulesToInstall = @(
+        "PSReadline"
+        "z"
+    )
+
+    $ModulesToInstall | ForEach-Object {
+        Write-Host "Installing pwsh module '$_'... " -NoNewline
+        start-process pwsh -ArgumentList ("-NoProfile -Command Install-Module '$_' -Force") -Wait -PassThru
+        Write-Host "Done"
+    }
 }
 
 # Function to get the latest release download URL with a filter from a Github repository
@@ -269,14 +284,21 @@ function DownloadAndInstallExeFiles {
 
 function DeleteTempDownloads {
     $TempFolder = "$ENV:Temp\win10prep"
-    Write-Host "Deleting temporary dowload folder '$TempFolder'... " -NoNewline
-    # Remove-Item $TempFolder -Force -Confirm:$false -Recurse
-    Remove-Item $TempFolder -Force -Recurse
-    Write-Host "Done"
+    if (Test-Path $TempFolder) {
+        Write-Host "Deleting temporary dowload folder '$TempFolder'... " -NoNewline
+        Remove-Item $TempFolder -Force -Recurse
+        Write-Host "Done"
+    }
+    else {
+        Write-Host "'$TempFolder' doesn't exist. Skipping..."
+    }
 }
 
+Start-Transcript "$(Split-Path $PSScriptRoot)\logs\installer.log" | Out-Null
 DownloadAndinstallScoopApps
+InstallPwshModules
 DownloadAndExtractGithubApps
 DownloadAndInstallExeFiles
-DeleteTempDownloadFolder
+DeleteTempDownloads
+Stop-Transcript | Out-Null
 exit

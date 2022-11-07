@@ -27,6 +27,12 @@ function DisableStickyKeys {
     }
 }
 
+
+# Enables dark mode in apps
+function EnableDarkMode {
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name AppsUseLightTheme -Value 0 -Force -PassThru
+}
+
 # Changes windows accent color
 function ChangeAccentColor {
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent"
@@ -77,7 +83,7 @@ function SetupPowerPlan {
 
     # Check if there are devices that can wake up your pc. If there are some, they will be disabled
     if ($WakeArmed -ne "NONE") { 
-        $WakeArmed | ForEach-Object { powercfg /devicedisablewake $_ } | Out-Null 
+        $WakeArmed | ForEach-Object { powercfg /devicedisablewake $_ }
         Write-Host "Removed all devices from 'powercfg -devicequery wake_armed' list"
     }
 
@@ -86,6 +92,9 @@ function SetupPowerPlan {
     powercfg -change -monitor-timeout-dc 0
     powercfg -change -standby-timeout-ac 0
     powercfg -change -standby-timeout-dc 0
+
+    # DeHibernating to clear up file space
+    powercfg /hibernate off
 }
 
 # Enables file extensions and hidden files
@@ -193,6 +202,7 @@ function RenameRecycleBin {
 Start-Transcript "$(Split-Path $PSScriptRoot)\logs\settingsTweaker.log" | Out-Null
 EnableClipboardHistory
 DisableStickyKeys
+EnableDarkMode
 ChangeAccentColor
 SetupPowerPlan
 SetExplorerSettings

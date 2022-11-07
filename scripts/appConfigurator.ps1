@@ -52,8 +52,11 @@ function SetWindowsTerminalSettings {
     Copy-Item -Path $From -Destination $To -PassThru -Force
 }
 
+Start-Transcript "$(Split-Path $PSScriptRoot)\logs\appConfigurator.log" | Out-Null
 CopyChainnerAiModel
 SetPowershellProfile
 SetTranslucentTbSettings
 SetVscodeUserSettings
 SetWindowsTerminalSettings
+Stop-Transcript | Out-Null
+exit
