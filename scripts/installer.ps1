@@ -1,4 +1,3 @@
-# TODO: Change pwsh module installation to Install-Module instead of scoop
 function DownloadAndinstallScoopApps {
     # Changing execution policy so that user can use cmdlets after running this script
     Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlets afterwards"
