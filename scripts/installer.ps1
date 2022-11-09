@@ -21,7 +21,8 @@ function DownloadAndinstallScoopApps {
         "spicetify-cli"
         "translucenttb"
         "vlc"
-        "BitstreamVeraSansMono-NF"
+        "BitstreamVeraSansMono-NF" # For terminal
+        "JetBrains-Mono" # For vscode
         "yarn"
         "windows-terminal"
         "pwsh"
