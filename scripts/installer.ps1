@@ -1,7 +1,7 @@
 function DownloadAndinstallScoopApps {
     # Changing execution policy so that user can use cmdlets after running this script
-    Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlets afterwards"
-    try { Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force -ErrorAction SilentlyContinue } catch { }
+    Write-Host "Setting 'ExecutionPolicy' to 'Unrestriced' so that user can use installed cmdlets afterwards"
+    try { Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force -ErrorAction SilentlyContinue } catch { }
     
     $ScoopApps = @(
         "audacity"
@@ -25,7 +25,6 @@ function DownloadAndinstallScoopApps {
         "yarn"
         "windows-terminal"
         "pwsh"
-        "microsoft-teams"
         "tinynvidiaupdatechecker"
     )
 
@@ -95,6 +94,7 @@ function DownloadAndinstallScoopApps {
                 }
             }
             "firefox" {
+                firefox -setDefaultBrowser -Silent
                 # Opens a window which lets you set the 'scoop profile' to the default firefox profile to not lose data when updating firefox with scoop
                 firefox -P
             }
@@ -121,6 +121,7 @@ function InstallPwshModules {
     # oh-my-posh and terminal-icons get installed by scoop
     $ModulesToInstall = @(
         "PSReadline"
+        "CompletionPredictor"
         "z"
     )
 
@@ -190,8 +191,6 @@ function DownloadAndExtractGithubApps {
 
     # Folder to temporarily download Github zip files in to be extracted later
     $TempDownloadFolder = "$ENV:Temp\win10prep\downloads\githubApps"
-
-    # Folder to extract downloaded Github zip files into
     $ExtractionFolder = "D:"
 
     # Switch for Hyper-V testing and actual installation
@@ -216,6 +215,8 @@ function DownloadAndExtractGithubApps {
     Write-Host "Done"
 
     Write-Host "Finished downloading Github zip files."
+
+    # ----------------------------------------------------------------------------------------------------------
 
     # Installing the Github zip files
     $GithubApps = Get-ChildItem $TempDownloadFolder
@@ -254,7 +255,6 @@ function DownloadAndInstallExeFiles {
     $DownloadUrls = @(
         "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe"
         "https://app.prntscr.com/build/setup-lightshot.exe"
-        "https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe"
         "https://aka.ms/vs/17/release/vc_redist.x64.exe"
     )
 
@@ -270,6 +270,8 @@ function DownloadAndInstallExeFiles {
         Write-Host "Done"
     }
     Write-Host "Finished downloading installers."
+    
+    # ----------------------------------------------------------------------------------------------------------
     
     # Running the installed files in '$ENV:Temp\win10prepDownloads\executables'
     [Windows.MessageBox]::Show("REMINDER: If the app has finished installing and the is script stuck, terminate the process in the system tray!", "Installer notice", [Windows.MessageBoxButton]::OK, [Windows.MessageBoxImage]::Warning) | Out-Null

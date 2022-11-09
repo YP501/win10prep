@@ -99,8 +99,38 @@ function SetupPowerPlan {
 
 # Enables file extensions and hidden files
 function SetExplorerSettings {
-    $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    $RegEntries = @{
+    # For disabling 'Show recently used files in Quick Access' and 'Show recently used folders in Quick Access'
+    $ExplorerRegPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer"
+    $ExplorerRegEntries = @{
+        "ShowFrequent" = @{
+            Type  = "DWORD"
+            Value = "0"
+        }
+        "ShowRecent"   = @{
+            Type  = "DWORD"
+            Value = 0
+        }
+    }
+
+    $ExplorerRegEntries.Keys | ForEach-Object {
+        $Key = $_
+        $Value = ($ExplorerRegEntries.$_).Value
+        $Type = ($ExplorerRegEntries.$_).Type
+
+        # Checking if registry entry exists
+        if ($null -eq (Get-ItemProperty -Path $ExplorerRegPath -Name $Key -ErrorAction SilentlyContinue)) {
+            New-ItemProperty -Path $ExplorerRegPath -Name $Key -Value $Value -PropertyType $Type -Force
+        }
+        else {
+            Set-ItemProperty -Path $ExplorerRegPath -Name $Key -Value $Value -Force -PassThru
+        }
+    }
+
+    # ----------------------------------------------------------------------------------------------------------
+
+    # For enabling file extensions, hidden files and launching explorer into 'This pc' instead of 'Quick Access'
+    $AdvancedRegPath = "$ExplorerRegPath\Advanced"
+    $AdvancedRegEntries = @{
         "HideFileExt" = @{
             Type  = "DWORD"
             Value = "0"
@@ -114,19 +144,22 @@ function SetExplorerSettings {
             Value = "1"
         }
     }
-    $RegEntries.Keys | ForEach-Object {
-        $Key = $_
-        $Value = ($RegEntries.$_).Value
-        $Type = ($RegEntries.$_).Type
 
-        # Checking if registry entry exists or no
-        if ($null -eq (Get-itemProperty -Path $RegPath -Name $Key -ErrorAction SilentlyContinue)) {
-            New-ItemProperty -Path $RegPath -Name $Key -Value $Value -PropertyType $Type -Force
+    $AdvancedRegEntries.Keys | ForEach-Object {
+        $Key = $_
+        $Value = ($AdvancedRegEntries.$_).Value
+        $Type = ($AdvancedRegEntries.$_).Type
+
+        # Checking if registry entry exists
+        if ($null -eq (Get-itemProperty -Path $AdvancedRegPath -Name $Key -ErrorAction SilentlyContinue)) {
+            New-ItemProperty -Path $AdvancedRegPath -Name $Key -Value $Value -PropertyType $Type -Force
         }
         else {
-            Set-ItemProperty -Path $RegPath -Name $Key -Value $Value -Force -PassThru
+            Set-ItemProperty -Path $AdvancedRegPath -Name $Key -Value $Value -Force -PassThru
         }
     }
+
+    # ----------------------------------------------------------------------------------------------------------
 
     # Defining labels for drive letters
     $DriveInfo = @{
@@ -149,7 +182,7 @@ function SetExplorerSettings {
     }
 }
 
-# Function to install and enable Breeze Obsiduan cursor pack
+# Copying and enabling Breeze Obsiduan cursor pack
 function InstallCustomCursor {
     # Defining paths for cursors
     $DefaultPath = "$(Split-Path "$PSScriptRoot")\items\cursors"

@@ -16,11 +16,12 @@ function CopyChainnerAiModel {
 # import powershell profile
 function SetPowershellProfile {
     $From = "$(Split-Path $PSScriptRoot)\items\configs\powershell-profile.ps1"
-    $To = "$Home\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+    $To = "$Home\scoop\persist\pwsh\Microsoft.PowerShell_profile.ps1"
 
     # Check if folder exists, creates one if it doesn't
     If (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
     Copy-Item -Path $From -Destination $To -PassThru -Force
+    Unblock-File $To
 }
 
 # Copy over translucenttb config json

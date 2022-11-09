@@ -46,6 +46,8 @@ There are three scripts bundled with this preparation bundle:
 "@
     Write-Host "`r`n"
 
+    # ----------------------------------------------------------------------------------------------------------
+
     # Whether the user wants to run the app installer or no
     $Choice = (Read-Host -Prompt "Would you like to run the application installer? (y/n)").ToLower()
     if ($Choice.Contains("y")) {
@@ -58,6 +60,8 @@ There are three scripts bundled with this preparation bundle:
         Write-Host "Skipped application installation."
     }
     Write-Host "`r`n"
+
+    # ----------------------------------------------------------------------------------------------------------
 
     # Whether the user wants to run the settings tweaker or no
     $Choice = (Read-Host -Prompt "Would you like to run the windows settings tweaker? (requires administrator privileges) (y/n)").ToLower()
@@ -72,6 +76,8 @@ There are three scripts bundled with this preparation bundle:
     }
     Write-Host  "`r`n"
 
+    # ----------------------------------------------------------------------------------------------------------
+
     # Whether or not the user wants to run the app configurator
     $Choice = (Read-Host -Prompt "Would you like to run the app configurator? (y/n)").ToLower()
     if ($Choice.Contains("y")) {
@@ -85,6 +91,8 @@ There are three scripts bundled with this preparation bundle:
     }
     Write-Host "`r`n"
 
+    # ----------------------------------------------------------------------------------------------------------
+    
     Write-Host "The windows 10 preparation script has finished successfully!" -ForegroundColor Green
 
     Stop-Transcript | Out-Null
