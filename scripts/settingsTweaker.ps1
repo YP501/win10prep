@@ -232,6 +232,12 @@ function RenameRecycleBin {
     Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "The Bruh Basket$([char]0x2122)" -Force -PassThru
 }
 
+# Renames the computer
+function RenameComputer {
+    $NewName = "THE-YP-MACHINE"
+    Rename-Computer $NewName -PassThru -Force
+}
+
 Start-Transcript "$(Split-Path $PSScriptRoot)\logs\settingsTweaker.log" | Out-Null
 EnableClipboardHistory
 DisableStickyKeys
@@ -241,5 +247,6 @@ SetupPowerPlan
 SetExplorerSettings
 InstallCustomCursor
 RenameRecycleBin
+RenameComputer
 Write-Host "Finished tweaking settings. Exiting..."
 Stop-Transcript | Out-Null

@@ -219,7 +219,7 @@ function DownloadAndExtractGithubApps {
 
     # ----------------------------------------------------------------------------------------------------------
 
-    # Installing the Github zip files
+    # Unzipping the github files
     $GithubApps = Get-ChildItem $TempDownloadFolder
     ForEach ($GithubApp in $GithubApps) {
         $ZippedFileName = $GithubApp.Name
