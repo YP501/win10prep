@@ -53,11 +53,27 @@ function SetWindowsTerminalSettings {
     Copy-Item -Path $From -Destination $To -PassThru -Force
 }
 
+# Copies over the files from './items/discord' to '$ENV:APPDATA\BetterDiscord\themes'
+function InstallBetterDiscordThemesAndPlugins {
+    $ThemeDir = "$ENV:APPDATA\BetterDiscord\themes"
+    $PluginDir = "$ENV:APPDATA\BetterDiscord\plugins"
+
+    if (!(Test-Path $ThemeDir)) { New-Item -Path $ThemeDir -ItemType Directory -Force }
+    if (!(Test-Path $PluginDir)) { New-Item =Path $PluginDir -ItemType Directory -Force }
+
+    $DiscordFiles = Get-ChildItem "$(Split-Path $PSScriptRoot)\items\discord"
+    $DiscordFiles | ForEach-Object {
+        if ($_.Name.Contains('theme')) { Copy-Item -Path $_.FullName -Destination $ThemeDir -PassThru -Force }
+        if ($_.Name.Contains('plugin')) { Copy-Item -Path $_.FullName -Destination $PluginDir -PassThru -Force }
+    }
+}
+
 Start-Transcript "$(Split-Path $PSScriptRoot)\logs\appConfigurator.log" | Out-Null
 CopyChainnerAiModel
 SetPowershellProfile
 SetTranslucentTbSettings
 SetVscodeUserSettings
 SetWindowsTerminalSettings
+InstallBetterDiscordThemesAndPlugins
 Stop-Transcript | Out-Null
 exit
