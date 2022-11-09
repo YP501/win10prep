@@ -53,7 +53,7 @@ function SetWindowsTerminalSettings {
     Copy-Item -Path $From -Destination $To -PassThru -Force
 }
 
-# Copies over the files from './items/discord' to '$ENV:APPDATA\BetterDiscord\themes'
+# Copies the files from './items/discord' to '$ENV:APPDATA\BetterDiscord\themes'
 function InstallBetterDiscordThemesAndPlugins {
     $ThemeDir = "$ENV:APPDATA\BetterDiscord\themes"
     $PluginDir = "$ENV:APPDATA\BetterDiscord\plugins"
