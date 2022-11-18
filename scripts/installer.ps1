@@ -35,7 +35,7 @@ function DownloadFile {
         $Destination
     )
 
-    Write-Host "Downloading from '$Url' to '$Destination'... " -NoNewline
+    Write-Host "Downloading from '$Url'... " -NoNewline
     $FileName = Split-Path $Url -leaf
     $Wc = New-Object System.Net.WebClient
     $Wc.DownloadFile($Url, "$Destination\$FileName")
@@ -170,7 +170,7 @@ function DownloadAndinstallScoopApps {
                 }
             }
             "firefox" {
-                firefox -setDefaultBrowser -Silent
+                firefox -setDefaultBrowser
             }
             "python" {
                 Write-Host "Importing python registry entries..."
@@ -223,7 +223,7 @@ function DownloadAndExtractGithubApps {
     # ----------------------------------------------------------------------------------------------------------
 
     # Unzipping downloaded github zip files to '$ExtractionFolder'
-    Get-ChildItem $TempGithubDownloadFolder | ForEach-Object {
+    Get-ChildItem $TempDownloadFolder | ForEach-Object {
         $ZippedFilePath = $_.FullName
         $UnzippedFolderName = [io.path]::GetFileNameWithoutExtension($ZippedFilePath)
         $UnzippedFolderPath = "$ExtractionFolder\$UnzippedFolderName"
@@ -297,6 +297,6 @@ Start-Transcript "$(Split-Path $PSScriptRoot)\logs\installer.log" | Out-Null
 DownloadAndinstallScoopApps
 DownloadAndExtractGithubApps
 DownloadAndRunInstallers
-DeleteTempDownloads
+DeleteTempDownloadFolders
 Stop-Transcript | Out-Null
 exit
