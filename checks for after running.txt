@@ -1,19 +1,17 @@
 Manual Installation:
-- Discord
 - Adobe Photoshop       (qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Adobe Premiere Pro 	(qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Dolby Access
-- Medal
-- OneDrive
 - Office 365
 - spicetify-cli         (iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex)
 - Betterdiscord
 
-Manual tweak:
+Manual tweaks:
 - Focus assist: everything set to off
 - Network settings: profile = private, IPv4 = on, IPv6 = off, Preferred DNS = 1.1.1.1, Alternate DNS = 1.0.0.1
-- Disable activity history (and clear)
+- Disable and clear activity history
 - FireFox sync login, browser.tabs.loadBookmarksInBackground = true
+- Logitech G HUB -> DPI = 200, 500, 800 | Set up Clicker Macro toggle on G9 1ms interval
 
 Folders and files to transfer over:
 For Haha storage go brrr (D:):
@@ -22,41 +20,6 @@ For Haha storage go brrr (D:):
 - Random Shit
 - School
 - GFX stuff
-
-- Blender addons:
-    - To enable:
-        - Extra objects for curve and mesh
-        - A.N.T.Landscape
-        - Archimesh
-        - Import Images as Planes
-        - Dynamic Sky
-        - Tri-Lighting
-        - LoopTools
-        - Node Wrangler
-        - Real Snow
-    - To Download:
-        - Blenderkit	 	(https://www.blenderkit.com/addon-download/)
-        - HDRI Sun Aligner 	(https://github.com/akej74/hdri-sun-aligner/releases/latest)
-        - BlendPresence		(https://github.com/abrasic/blendpresence/releases/latest)
-
-- BetterDiscord:
-    With PluginRepo:
-    - BetterAnimations
-    - BetterAudioPlayer
-    - BetterBotTags
-    - BetterInvites
-    - DoNotTrack
-    - FileViewer
-    - GameActivityToggle
-    - HideUtils
-    - ImageUtilities
-    - NoSpotifyPause
-    - SecretRingTone
-    - ShowAllActivities
-    - ShowBadgesInChat
-    - SpotifyControls
-    - ThemeRepo
-    Themes (from folder)
 
 Taskbar order:
 1. Explorer

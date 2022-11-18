@@ -1,41 +1,47 @@
-﻿#no errors throughout
-$ErrorActionPreference = 'silentlycontinue'
-
-# Checks if log folder exists, if not it creates one
+﻿# Checks if log folder exists, if not it creates one
 $LogFolder = "$(Split-Path $PSScriptRoot)\logs"
-If (Test-Path $LogFolder) {
-    Write-Host "$LogFolder exists. Skipping."
-}
-Else {
-    Write-Host "The folder '$LogFolder' doesn't exist. Creating now."
-    New-Item -Path "$LogFolder" -ItemType Directory
+function CheckLogFolder {
+    If (Test-Path $LogFolder) {
+        Write-Host "$LogFolder exists. Skipping."
+    }
+    Else {
+        Write-Host "The folder '$LogFolder' doesn't exist. Creating now."
+        New-Item -Path "$LogFolder" -ItemType Directory
+    }
+    
+    # Newline for formatting (looks good)
+    Write-Host "`r`n"
 }
 
+#========================================================================================================
 
-# Check if user has internet connection
-Write-Host "Checking internet connection..."
-$Connected = Get-NetRoute | Where-Object DestinationPrefix -eq '0.0.0.0/0' | Get-NetIPInterface | Where-Object ConnectionState -eq 'Connected'
-if ($null -eq $Connected) {
-    Write-Error "You must be connected to the internet in order to use this script!" -Category ObjectNotFound
-    Read-Host -Prompt "Press any key to continue..."
-    exit
+# Check if user has internet connection (required for app installer)
+function CheckInternetConnection {
+    Write-Host "Checking internet connection..."
+    $Connected = Get-NetRoute | Where-Object DestinationPrefix -eq '0.0.0.0/0' | Get-NetIPInterface | Where-Object ConnectionState -eq 'Connected'
+    if ($null -eq $Connected) {
+        Write-Error "You must be connected to the internet in order to use this script!" -Category ObjectNotFound
+        Read-Host -Prompt "Press any key to continue..."
+        exit
+    }
+    else { Write-Host "User has internet connection. Continuing." }
+
+    # Newline for formatting (looks good)
+    Write-Host "`r`n"
 }
-else {
-    Write-Host "User has internet connection. Continuing..."
-}
-Write-Host "`r`n"
 
+#=======================================================================================================================================================
 
-# Main function which loads  scripts
+# Main function which loads scripts
 function Main {
     Write-Host @"
-██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗
-██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝
-██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗  
-██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝  
-╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗
- ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
-                                                              
+    ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗
+    ██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝
+    ██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗  
+    ██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝  
+    ╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗
+     ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
+                                                                  
 "@
 
     Write-Host @"
@@ -44,67 +50,80 @@ There are three scripts bundled with this preparation bundle:
 2. A windows settings tweaker
 3. An app configurator
 "@
+
+    # Newline for formatting (looks good)
     Write-Host "`r`n"
 
-    # ----------------------------------------------------------------------------------------------------------
+    #=======================================================================================================================================================
 
-    # Whether the user wants to run the app installer or no
-    $Choice = (Read-Host -Prompt "Would you like to run the application installer? (y/n)").ToLower()
+    # Prompt for app installer
+    Write-Host "Would you like to run the application installer? [Y/N]" -ForegroundColor Cyan
+    $Choice = (Read-Host).ToLower()
     if ($Choice.Contains("y")) {
         Write-Host "Running application installer... " -NoNewline
         Write-Warning "Do not close this window!"
-        Start-Process powershell.exe -NoNewWindow -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/installer.ps1") -Wait
-        Write-Host "Finished installing applications."
+        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot\installer.ps1") -Wait -NoNewWindow
+        Write-Host "Finished running application installer."
     }
-    else {
-        Write-Host "Skipped application installation."
-    }
+    else { Write-Host "Skipped application installer." }
+
+    # Newline for formatting (looks good)
     Write-Host "`r`n"
 
-    # ----------------------------------------------------------------------------------------------------------
+    #=======================================================================================================================================================
 
-    # Whether the user wants to run the settings tweaker or no
-    $Choice = (Read-Host -Prompt "Would you like to run the windows settings tweaker? (requires administrator privileges) (y/n)").ToLower()
+    # Prompt for settings tweaker
+    Write-Host "Would you like to run the windows settings tweaker? (requires administrator privileges) [Y/N]" -ForegroundColor Cyan
+    $Choice = (Read-Host).ToLower()
     if ($Choice.Contains("y")) {
         Write-Host "Running settings tweaker... " -NoNewline
-        Write-Warning "Do not close this window!"
-        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/settingsTweaker.ps1") -Wait -Verb RunAs
-        Write-Host "Finished tweaking settings."
+        Write-Warning "Do not close neither this or the newly opened window!"
+        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot\settingsTweaker.ps1") -Wait -Verb RunAs
+        Write-Host "Finished running windows settings tweaker."
     }
-    else {
-        Write-Host "Skipped windows settings tweaker."
-    }
-    Write-Host  "`r`n"
+    else { Write-Host "Skipped windows settings tweaker." }
 
-    # ----------------------------------------------------------------------------------------------------------
+    # Newline for formatting (looks good)
+    Write-Host "`r`n"
 
-    # Whether or not the user wants to run the app configurator
-    $Choice = (Read-Host -Prompt "Would you like to run the app configurator? (y/n)").ToLower()
+    #=======================================================================================================================================================
+
+    # Prompt for app configurator
+    Write-Host "Would you like to run the app configurator? [Y/N]" -ForegroundColor Cyan
+    $Choice = (Read-Host).ToLower()
     if ($Choice.Contains("y")) {
         Write-Host "Running app configurator... " -NoNewline
         Write-Warning "Do not close this window!"
-        Start-Process powershell.exe -NoNewWindow -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot/appConfigurator.ps1") -Wait
-        Write-Host "Finished configuring apps."
+        Start-Process powershell.exe -ArgumentList("-NoProfile -ExecutionPolicy Bypass -File $PSScriptRoot\appConfigurator.ps1") -Wait -NoNewWindow
+        Write-Host "Finished running app configurator."
     }
-    else {
-        Write-Host "Skipped app configurator."
-    }
+    else { Write-Host "Skipped app configurator." }
+
+    # Newline for formatting (looks good)
     Write-Host "`r`n"
 
-    # ----------------------------------------------------------------------------------------------------------
-    
+    #=======================================================================================================================================================
+
+    # Runs after all the scripts are done running/skipped
     Write-Host "The windows 10 preparation script has finished successfully!" -ForegroundColor Green
+    Write-Host "Logs can be found at '$LogFolder'" -ForegroundColor Yellow
 
-    Stop-Transcript | Out-Null
-    Write-Host "Logs can be found at '$(Split-Path $PSScriptRoot)\logs'" -ForegroundColor Yellow
+    # Newline for formatting (looks good)
     Write-Host "`r`n"
-    
-    # Ask if the user wants to reboot
-    $Choice = (Read-Host -Prompt "A reboot is advised after finishing running this script. Would you like to reboot now? (y/n)").ToLower()
-    if ($Choice.Contains('y')) {
-        Restart-Computer -Force
+
+    # Prompt with reboot
+    $Choice = (Read-Host -Prompt "A reboot is advised after running this preparation package. Would you like to reboot now? [Y/N]").ToLower()
+    if ($Choice.Contains("y")) { Restart-Computer -Force }
+    else { 
+        Write-Host "Skipping reboot. Exiting."
+        Start-Sleep -Seconds 2
+        exit
     }
 }
-Start-Transcript "$(Split-Path $PSScriptRoot)\logs\main.log" | Out-Null
+# CheckLogFolder comes before Start-Transcript since transcript gets saved into the folder which is getting created in CheckLogFolder
+CheckLogFolder
+Start-Transcript "$LogFolder\main.log" | Out-Null
+CheckInternetConnection
 Main
-# 'Stop-Transcript' gets called at end of main function due to reboot
+Stop-Transcript
+exit

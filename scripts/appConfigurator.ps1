@@ -1,79 +1,123 @@
 # Copy over ai upscale model
-function CopyChainnerAiModel {
-    $From = "$(Split-Path $PSScriptRoot)\items\configs\4x_RealSR_DF2K_JPEG.pth"
-    
+function CopyAiModels {
+    Write-Host "Copying over AI models"
+
     # Switch for Hyper-V testing and actual installation
     $RootDrive = "D:"
     if (!(Test-Path $RootDrive)) { $RootDrive = "C:" }
+    
+    $SourceFolder = "$(Split-Path $PSScriptRoot)\items\AiModels"
+    $To = "$RootDrive\AiModels"
 
-    $To = "$RootDrive\AiModels\4x_RealSR_DF2K_JPEG.pth"
+    # Destination folder check
+    If (!(Test-Path $To)) { New-Item -Path $To -ItemType Directory -Force }
+    else { Remove-Item "$To\*" -Recurse -Force }
 
-    # Check if folder exists, creates it if it doesn't
-    If (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
-    Copy-Item -Path $From -Destination $To -PassThru -Force
+    Copy-Item -Path "$SourceFolder\*" -Destination $To -PassThru -Force -Recurse
 }
 
-# import powershell profile
-function SetPowershellProfile {
-    $From = "$(Split-Path $PSScriptRoot)\items\configs\powershell-profile.ps1"
-    $To = "$Home\scoop\persist\pwsh\Microsoft.PowerShell_profile.ps1"
+#========================================================================================================
 
-    # Check if folder exists, creates one if it doesn't
+# Set pwsh profile
+function SetPowershellProfile {
+    Write-Host "Setting pwsh profile file"
+
+    $From = "$(Split-Path $PSScriptRoot)\items\powershell-profile.ps1"
+    $To = "$Home\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+
+    # Destination folder check
     If (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
     Copy-Item -Path $From -Destination $To -PassThru -Force
+
+    # Unblocking file so that windows allows it to run on pwsh startup
     Unblock-File $To
 }
 
+#========================================================================================================
+
 # Copy over translucenttb config json
 function SetTranslucentTbSettings {
-    $From = "$(Split-Path $PSScriptRoot)\items\configs\translucentTB-config.json"
+    Write-Host "Settings TranslucentTB settings"
+
+    $From = "$(Split-Path $PSScriptRoot)\items\translucentTB-config.json"
 
     # Filtering through '$ENV:LocalAppData\Packages' since it has id-based folder names
     $To = "$((Get-ChildItem "$ENV:LocalAppData\Packages" -Filter "*TranslucentTB*").FullName)\RoamingState\settings.json"
 
-    If (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
-    Copy-Item -Path $From -Destination $To -PassThru -Force
+    If (!(Test-Path $To)) { Write-Host "Couldn't find installation for TranslucentTB. Skipping" }
+    else { Copy-Item -Path $From -Destination $To -PassThru -Force }
 }
+
+#========================================================================================================
 
 # Copy over vscode user settings
 function SetVscodeUserSettings {
-    $From = "$(Split-Path $PSScriptRoot)\items\configs\vscode-user-settings.json"
+    Write-Host "Setting vscode user settings"
+
+    $From = "$(Split-Path $PSScriptRoot)\items\vscode-user-settings.json"
     $To = "$Home\Scoop\persist\vscode\data\user-data\User\settings.json"
 
     If (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
     Copy-Item -Path $From -Destination $To -PassThru -Force
 }
 
+#========================================================================================================
+
 # Copy over windows terminal settings
 function SetWindowsTerminalSettings {
-    $From = "$(Split-Path $PSScriptRoot)\items\configs\windows-terminal-settings.json"
+    Write-Host "Setting windows terminal settings"
+
+    $From = "$(Split-Path $PSScriptRoot)\items\windows-terminal-settings.json"
     $To = "$ENV:LocalAppData\Microsoft\Windows Terminal\settings.json"
 
     If (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
     Copy-Item -Path $From -Destination $To -PassThru -Force
 }
 
-# Copies the files from './items/discord' to '$ENV:APPDATA\BetterDiscord\themes'
+#========================================================================================================
+
+# Setting betterdiscord themes
 function InstallBetterDiscordThemesAndPlugins {
-    $ThemeDir = "$ENV:APPDATA\BetterDiscord\themes"
-    $PluginDir = "$ENV:APPDATA\BetterDiscord\plugins"
+    Write-Host "Installing Betterdiscord themes and plugins"
 
-    if (!(Test-Path $ThemeDir)) { New-Item -Path $ThemeDir -ItemType Directory -Force }
-    if (!(Test-Path $PluginDir)) { New-Item =Path $PluginDir -ItemType Directory -Force }
+    $DestThemeDir = "$ENV:APPDATA\BetterDiscord\themes"
+    $DestPluginDir = "$ENV:APPDATA\BetterDiscord\plugins"
 
-    $DiscordFiles = Get-ChildItem "$(Split-Path $PSScriptRoot)\items\discord"
-    $DiscordFiles | ForEach-Object {
-        if ($_.Name.Contains('theme')) { Copy-Item -Path $_.FullName -Destination $ThemeDir -PassThru -Force }
-        if ($_.Name.Contains('plugin')) { Copy-Item -Path $_.FullName -Destination $PluginDir -PassThru -Force }
-    }
+    $SourceThemeDir = "$(Split-Path $PSScriptRoot)\items\Betterdiscord\themes"
+    $SourcePluginDir = "$(Split-Path $PSScriptRoot)\items\Betterdiscord\plugins"
+
+    if (!(Test-Path $DestThemeDir)) { New-Item -Path $DestThemeDir -ItemType Directory -Force }
+    if (!(Test-Path $DestPluginDir)) { New-Item -Path $DestPluginDir -ItemType Directory -Force }
+
+    Copy-Item -Path "$SourceThemeDir\*" -Destination $DestThemeDir -PassThru -Force -Recurse
+    Copy-Item -Path "$SourcePluginDir\*" -Destination $DestPluginDir -PassThru -Force -Recurse
 }
 
+#========================================================================================================
+
+# Copies over the userpref.blend file
+function SetBlenderConfig {
+    Write-Host "Setting blender settings"
+
+    # Get installed blender version for correct folder assignment
+    $Version = (scoop info blender).Version.substring(0, 3)
+
+    $From = "$(Split-Path $PSScriptRoot)\items\userpref.blend"
+    $To = "$ENV:AppData\Blender Foundation\Blender\$Version\config\userpref.blend"
+
+    if (!(Test-Path $To)) { New-Item -Path (Split-Path $To) -ItemType Directory -Force }
+    Copy-Item -Path $From -Destination $To -PassThru -Force
+}
+
+#========================================================================================================
+
 Start-Transcript "$(Split-Path $PSScriptRoot)\logs\appConfigurator.log" | Out-Null
-CopyChainnerAiModel
+CopyAiModels
 SetPowershellProfile
 SetTranslucentTbSettings
 SetVscodeUserSettings
 SetWindowsTerminalSettings
 InstallBetterDiscordThemesAndPlugins
+SetBlenderConfig
 Stop-Transcript | Out-Null
 exit

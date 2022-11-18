@@ -1,5 +1,7 @@
 # Enables clipboard history
 function EnableClipboardHistory {
+    Write-Host 'Enabling clipboard history'
+
     $RegPath = "HKCU:\Software\Microsoft\Clipboard"
     $RegEntry = @{
         Key   = "EnableClipboardHistory";
@@ -9,8 +11,12 @@ function EnableClipboardHistory {
     New-ItemProperty -Path $RegPath -Name $RegEntry.Key -PropertyType $RegEntry.Type -Value $RegEntry.Value -Force
 }
 
+#========================================================================================================
+
 # Disables sticky keys
 function DisableStickyKeys {
+    Write-Host "Disabling sticky keys"
+
     # Object with format '$RegPath = $NewFlagValue'
     $RegEntries = @{
         "HKCU:\Control Panel\Accessibility\StickyKeys"        = "506"
@@ -27,14 +33,20 @@ function DisableStickyKeys {
     }
 }
 
+#========================================================================================================
 
 # Enables dark mode in apps
 function EnableDarkMode {
+    Write-Host "Enabling dark mode"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name AppsUseLightTheme -Value 0 -Force -PassThru
 }
 
+#========================================================================================================
+
 # Changes windows accent color
 function ChangeAccentColor {
+    Write-Host "Changing accent color"
+
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Accent"
     $RegEntries = @{
         "AccentColorMenu" = @{
@@ -68,12 +80,16 @@ function ChangeAccentColor {
         }
     }
 
-    # Restarting explorer.exe to see changes
+    # Restarting explorer.exe to apply changes
     Stop-Process -ProcessName explorer -Force -ErrorAction SilentlyContinue -PassThru
 }
 
+#========================================================================================================
+
 # Function that sets up power plan and disables auto-wake
 function SetupPowerPlan {
+    Write-Host "Setting up power plan"
+
     # Set power plan to 'Ultimate Performance'
     $PowerPlan = Get-CimInstance -Name root\cimv2\power -Class win32_PowerPlan -Filter "ElementName = 'Ultimate Performance'"      
     powercfg /setactive ([string]$PowerPlan.InstanceID).Replace("Microsoft:PowerPlan\{", "").Replace("}", "")
@@ -93,12 +109,16 @@ function SetupPowerPlan {
     powercfg -change -standby-timeout-ac 0
     powercfg -change -standby-timeout-dc 0
 
-    # DeHibernating to clear up file space
+    # De-hibernating to clear up file space
     powercfg /hibernate off
 }
 
+#========================================================================================================
+
 # Enables file extensions and hidden files
 function SetExplorerSettings {
+    Write-Host "Setting explorer settings"
+
     # For disabling 'Show recently used files in Quick Access' and 'Show recently used folders in Quick Access'
     $ExplorerRegPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer"
     $ExplorerRegEntries = @{
@@ -182,8 +202,12 @@ function SetExplorerSettings {
     }
 }
 
+#========================================================================================================
+
 # Copying and enabling Breeze Obsiduan cursor pack
 function InstallCustomCursor {
+    Write-Host "Installing custom cursor pack"
+
     # Defining paths for cursors
     $DefaultPath = "$(Split-Path "$PSScriptRoot")\items\cursors"
     $Dest = "$ENV:SystemRoot\Cursors"
@@ -226,17 +250,25 @@ function InstallCustomCursor {
     }
 }
 
+#========================================================================================================
+
 # Rename the recycle bin
 function RenameRecycleBin {
+    Write-Host "Renaming recycle bin"
     $RegPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CLSID\{645FF040-5081-101B-9F08-00AA002F954E}"
     Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "The Bruh Basket$([char]0x2122)" -Force -PassThru
 }
 
+#========================================================================================================
+
 # Renames the computer
 function RenameComputer {
+    Write-Host "Renaming computer"
     $NewName = "THE-YP-MACHINE"
     Rename-Computer $NewName -PassThru -Force
 }
+
+#========================================================================================================
 
 Start-Transcript "$(Split-Path $PSScriptRoot)\logs\settingsTweaker.log" | Out-Null
 EnableClipboardHistory
