@@ -24,3 +24,7 @@ $PSReadlineColors = @{
 }
 
 set-PSReadLineOption -PredictionViewStyle ListView -ContinuationPrompt "$([char]0x276F) " -Colors $PSReadlineColors
+
+# Completion scripts
+oh-my-posh completion powershell | Out-String | Invoke-Expression
+zoxide init powershell | Out-String | Invoke-Expression

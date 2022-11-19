@@ -49,6 +49,8 @@ There are three scripts bundled with this preparation bundle:
 1. An application installer
 2. A windows settings tweaker
 3. An app configurator
+
+It is recommended to run all of these because some scripts require things that get added by other scripts.
 "@
 
     # Newline for formatting (looks good)
@@ -115,7 +117,7 @@ There are three scripts bundled with this preparation bundle:
     $Choice = (Read-Host -Prompt "A reboot is advised after running this preparation package. Would you like to reboot now? [Y/N]").ToLower()
     if ($Choice.Contains("y")) { Restart-Computer -Force }
     else { 
-        Write-Host "Skipping reboot. Exiting."
+        Write-Host "Skipped reboot. Exiting."
         Start-Sleep -Seconds 2
         exit
     }
@@ -125,5 +127,5 @@ CheckLogFolder
 Start-Transcript "$LogFolder\main.log" | Out-Null
 CheckInternetConnection
 Main
-Stop-Transcript
+Stop-Transcript | Out-Null
 exit

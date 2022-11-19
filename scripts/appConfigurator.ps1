@@ -44,7 +44,7 @@ function SetTranslucentTbSettings {
     # Filtering through '$ENV:LocalAppData\Packages' since it has id-based folder names
     $To = "$((Get-ChildItem "$ENV:LocalAppData\Packages" -Filter "*TranslucentTB*").FullName)\RoamingState\settings.json"
 
-    If (!(Test-Path $To)) { Write-Host "Couldn't find installation for TranslucentTB. Skipping" }
+    If (!(Test-Path $To)) { Write-Host "Couldn't find installation for TranslucentTB. Skipping." }
     else { Copy-Item -Path $From -Destination $To -PassThru -Force }
 }
 

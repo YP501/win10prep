@@ -65,7 +65,7 @@ function AddToStartMenu {
 
 function DownloadAndinstallScoopApps {
     # Changing execution policy so that user can use cmdlets after running this script
-    Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlets afterwards... " -NoNewline
+    Write-Host "Setting 'ExecutionPolicy' for 'CurrentUser' to 'RemoteSigned' so that user can use installed cmdlets... " -NoNewline
     try { Set-ExecutionPolicy -ExecutionPolicy -Scope CurrentUser RemoteSigned -Force -ErrorAction SilentlyContinue } catch { }
     Write-Host "Done"
     
@@ -73,6 +73,7 @@ function DownloadAndinstallScoopApps {
     # Defining apps we want (and can) install with scoop
     # Intalling 7zip first because its used to unzip github downloaded files
     $ScoopApps = @(
+        "7zip"
         "audacity"
         "blender"
         "filezilla"
@@ -89,6 +90,7 @@ function DownloadAndinstallScoopApps {
         "bat"
         "terminal-icons"
         "https://raw.githubusercontent.com/YP501/scoop-manifests/main/manifests/completionpredictor.json" # Completion predictor
+        "fzf"
         #====================================
         "python"
         "qbittorrent-enhanced"
@@ -111,7 +113,7 @@ function DownloadAndinstallScoopApps {
     # Check for scoop installation. If it doesn't exist, install scoop
     Write-Host "Checking if scoop is already installed"
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        Write-Host "Scoop is already installed. Skipping"
+        Write-Host "Scoop is already installed. Skipping."
     }
     else {
         Write-Host "Scoop is not installed. Installing now"
@@ -170,7 +172,7 @@ function DownloadAndinstallScoopApps {
                 }
             }
             "firefox" {
-                firefox -setDefaultBrowser
+                firefox -P # Set profile to scoop
             }
             "python" {
                 Write-Host "Importing python registry entries..."
