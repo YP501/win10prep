@@ -153,6 +153,7 @@ function DownloadAndinstallScoopApps {
                     "jbockle.jbockle-format-files"
                     "LeonardSSH.vscord"
                     "miguelsolorio.fluent-icons"
+                    "ms-python.black-formatter"
                     "ms-python.python"
                     "ms-python.vscode-pylance"
                     "ms-vscode.powershell"

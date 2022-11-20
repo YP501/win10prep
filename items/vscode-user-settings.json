@@ -65,5 +65,8 @@
     "powershell.powerShellAdditionalExePaths": {
         "7": "C:\\Users\\YP501\\scoop\\apps\\pwsh\\current\\pwsh.exe"
     },
-    "powershell.powerShellDefaultVersion": "7"
+    "powershell.powerShellDefaultVersion": "7",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
 }
