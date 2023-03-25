@@ -1,7 +1,6 @@
 Manual Installation:
 - Adobe Photoshop       (qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Adobe Premiere Pro 	(qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
-- Dolby Access
 - Office 365
 - spicetify-cli         (iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex)
 - Betterdiscord

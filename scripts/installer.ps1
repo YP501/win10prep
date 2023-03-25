@@ -91,9 +91,11 @@ function DownloadAndinstallScoopApps {
         "terminal-icons"
         "https://raw.githubusercontent.com/YP501/scoop-manifests/main/manifests/completionpredictor.json" # Completion predictor
         "fzf"
+        "gsudo"
+        "file"
         #====================================
         "python"
-        "qbittorrent-enhanced"
+        "qbittorrent"
         "spotify"
         "spicetify-cli"
         "translucenttb"
@@ -104,7 +106,10 @@ function DownloadAndinstallScoopApps {
         "windows-terminal"
         "pwsh"
         "tinynvidiaupdatechecker"
-        "gsudo"
+        "ds4windows"
+        "authy"
+        "materialize"
+        "mysql"
     )
 
     # Scoop application installation dir for accessing app roots
@@ -164,7 +169,6 @@ function DownloadAndinstallScoopApps {
                     "ssmi.after-dark"
                     "usernamehw.errorlens"
                     "wix.vscode-import-cost"
-                    "xuanzhi33.simple-calculator"
                 )
                 $VscodeExtensions | ForEach-Object {
                     Write-Host "Installing extension $_... " -NoNewline
@@ -173,7 +177,7 @@ function DownloadAndinstallScoopApps {
                 }
             }
             "firefox" {
-                firefox -P # Set profile to scoop
+                firefox -P # Set profile to scoop manually
             }
             "python" {
                 Write-Host "Importing python registry entries..."
