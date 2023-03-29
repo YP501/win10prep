@@ -1,14 +1,13 @@
 Manual Installation:
-- Adobe Photoshop       (qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
-- Adobe Premiere Pro 	(qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
+- Adobe Products       	(qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Office 365
 - spicetify-cli         (iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex)
-- Betterdiscord
+- Gaea			(blender terrain generator software)
 
 Manual tweaks:
 - Focus assist: everything set to off
 - Network settings: profile = private, IPv4 = on, IPv6 = off, Preferred DNS = 1.1.1.1, Alternate DNS = 1.0.0.1
-- Disable and clear activity history
+- Disable and clear windows activity history
 - FireFox sync login, browser.tabs.loadBookmarksInBackground = true
 - Logitech G HUB -> DPI = 200, 500, 800 | Set up Clicker Macro toggle on G9 1ms interval
 
@@ -27,13 +26,15 @@ Taskbar order:
 4. Steam
 5. Spotify
 6. Blender
-7. OBS studio
-8. Premiere Pro
-9. Photoshop
-10. vscode
-11. Windows terminal
-12. MongoDB Atlas
-13. Dolby access
+7. Gaea
+8. OBS studio
+9. Premiere Pro
+10. Photoshop
+11. After Effects
+12. vscode
+13. Windows terminal
+14. MongoDB Atlas
+15. Dolby access
 
 Explorer pinned order:
 1. Desktop
@@ -46,4 +47,6 @@ Explorer pinned order:
 8. Programming
 9. Github
 10. GFX stuff
-11. The Bruh Basket™
+11. scoop
+12. Rblx scripting
+13. The Bruh Basket™

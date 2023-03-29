@@ -76,25 +76,6 @@ function SetWindowsTerminalSettings {
 
 #========================================================================================================
 
-# Setting betterdiscord themes
-function InstallBetterDiscordThemesAndPlugins {
-    Write-Host "Installing Betterdiscord themes and plugins"
-
-    $DestThemeDir = "$ENV:APPDATA\BetterDiscord\themes"
-    $DestPluginDir = "$ENV:APPDATA\BetterDiscord\plugins"
-
-    $SourceThemeDir = "$(Split-Path $PSScriptRoot)\items\Betterdiscord\themes"
-    $SourcePluginDir = "$(Split-Path $PSScriptRoot)\items\Betterdiscord\plugins"
-
-    if (!(Test-Path $DestThemeDir)) { New-Item -Path $DestThemeDir -ItemType Directory -Force }
-    if (!(Test-Path $DestPluginDir)) { New-Item -Path $DestPluginDir -ItemType Directory -Force }
-
-    Copy-Item -Path "$SourceThemeDir\*" -Destination $DestThemeDir -PassThru -Force -Recurse
-    Copy-Item -Path "$SourcePluginDir\*" -Destination $DestPluginDir -PassThru -Force -Recurse
-}
-
-#========================================================================================================
-
 # Copies over the userpref.blend file
 function SetBlenderConfig {
     Write-Host "Setting blender settings"

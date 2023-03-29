@@ -83,6 +83,7 @@ function DownloadAndinstallScoopApps {
         "nodejs"
         "obs-studio"
         "vscode"
+        "discord"
         #======== PowerShell Modules ========
         "psreadline"
         "oh-my-posh"
@@ -264,10 +265,8 @@ function DownloadAndRunInstallers {
         "https://aka.ms/vs/17/release/vc_redist.x64.exe"                                            # Visual C++ redistributable packages
         "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe"                    # Steam
         "https://app.prntscr.com/build/setup-lightshot.exe"                                         # Lightshot
-        "https://dl.discordapp.net/distro/app/stable/win/x86/1.0.9007/DiscordSetup.exe"             # Discord
         "https://install.medal.tv/MedalSetup.exe"                                                   # Medal.TV
         "https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe"            # Logitech G Hub
-        "https://pkg.authy.com/authy/stable/2.2.1/win32/x64/Authy%20Desktop%20Setup%202.2.1.exe"    # Authy desktop
     )
 
     # Check if temporary download folder exists
