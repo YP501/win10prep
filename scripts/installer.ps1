@@ -223,7 +223,6 @@ function DownloadAndExtractGithubApps {
     New-Item -Path "$tempDownloadFolder" -ItemType Directory
 
     # Downloading latest releases from github
-    DownloadFile -Url (GetGithubDownloadUrl -Repo "chaiNNer-org/chaiNNer" -Filter "windows-x64") -Destination $TempDownloadFolder
     DownloadFile -Url (GetGithubDownloadUrl -Repo "axstin/rbxfpsunlocker" -Filter "x64-hotfix1.zip") -Destination $TempDownloadFolder
 
     # ----------------------------------------------------------------------------------------------------------
@@ -278,7 +277,7 @@ function DownloadAndRunInstallers {
     
     # Running downloaded installers
     [Windows.MessageBox]::Show("REMINDER: If the app has finished installing and the is script stuck, terminate the process in the system tray!", "Installer notice", [Windows.MessageBoxButton]::OK, [Windows.MessageBoxImage]::Warning) | Out-Null
-    Write-Warning "The script might take a while to catch up after you terminate the process!"
+    Write-Warning "The script might take a bit to catch up after you terminate the process!"
     Get-ChildItem -Path $TempInstallerDownloadFolder -File "*.exe" | ForEach-Object { Start-Process -FilePath $_.FullName -Wait -PassThru }
  
     Write-Host "Finished running installers"

@@ -1,23 +1,3 @@
-# Copy over ai upscale model
-function CopyAiModels {
-    Write-Host "Copying over AI models"
-
-    # Switch for Hyper-V testing and actual installation
-    $RootDrive = "D:"
-    if (!(Test-Path $RootDrive)) { $RootDrive = "C:" }
-    
-    $SourceFolder = "$(Split-Path $PSScriptRoot)\items\AiModels"
-    $To = "$RootDrive\AiModels"
-
-    # Destination folder check
-    If (!(Test-Path $To)) { New-Item -Path $To -ItemType Directory -Force }
-    else { Remove-Item "$To\*" -Recurse -Force }
-
-    Copy-Item -Path "$SourceFolder\*" -Destination $To -PassThru -Force -Recurse
-}
-
-#========================================================================================================
-
 # Set pwsh profile
 function SetPowershellProfile {
     Write-Host "Setting pwsh profile file"
@@ -93,12 +73,10 @@ function SetBlenderConfig {
 #========================================================================================================
 
 Start-Transcript "$(Split-Path $PSScriptRoot)\logs\appConfigurator.log" | Out-Null
-CopyAiModels
 SetPowershellProfile
 SetTranslucentTbSettings
 SetVscodeUserSettings
 SetWindowsTerminalSettings
-InstallBetterDiscordThemesAndPlugins
 SetBlenderConfig
 Stop-Transcript | Out-Null
 exit
