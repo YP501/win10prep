@@ -2,7 +2,7 @@ Manual Installation:
 - Adobe Products       	(qbittorrent) (https://idope.se/torrent/adobe%20collection%202022/a69e85b2fbe0aebacb3348244346f3cd3ad65eaa/)
 - Office 365
 - spicetify-cli         (iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex)
-- Gaea			(blender terrain generator software)
+- Gaea			(blender terrain generator software) (optional)
 
 Manual tweaks:
 - Focus assist: everything set to off
@@ -13,11 +13,12 @@ Manual tweaks:
 
 Folders and files to transfer over:
 For Haha storage go brrr (D:):
-- 3D projects
-- Programming
 - Random Shit
 - School
+- 3D projects
+- Programming
 - GFX stuff
+- Rblx Scripting
 
 Taskbar order:
 1. Explorer
