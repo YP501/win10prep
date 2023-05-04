@@ -1,45 +1,63 @@
+// See https://TranslucentTB.github.io/config for more information
 {
     "$schema": "https://sylveon.dev/TranslucentTB/schema",
     "desktop_appearance": {
         "accent": "clear",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": false
     },
     "visible_window_appearance": {
         "enabled": true,
         "accent": "clear",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": false,
+        "rules": {
+            "window_class": {},
+            "window_title": {},
+            "process_name": {}
+        }
     },
     "maximized_window_appearance": {
         "enabled": true,
         "accent": "acrylic",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": true,
+        "rules": {
+            "window_class": {},
+            "window_title": {},
+            "process_name": {}
+        }
     },
     "start_opened_appearance": {
         "enabled": true,
         "accent": "clear",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": true
     },
     "search_opened_appearance": {
         "enabled": true,
         "accent": "clear",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": true
     },
     "task_view_opened_appearance": {
         "enabled": true,
         "accent": "clear",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": true
     },
     "battery_saver_appearance": {
         "enabled": false,
         "accent": "opaque",
         "color": "#00000000",
-        "show_peek": false
+        "show_peek": false,
+        "show_line": false
     },
     "ignored_windows": {
         "window_class": [],

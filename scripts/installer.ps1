@@ -71,46 +71,45 @@ function DownloadAndinstallScoopApps {
     
 
     # Defining apps we want (and can) install with scoop
-    # Intalling 7zip first because its used to unzip github downloaded files
     $ScoopApps = @(
+        #======== PowerShell Modules ========
+        "https://raw.githubusercontent.com/YP501/scoop-manifests/main/manifests/completionpredictor.json" # Completion predictor
+        "oh-my-posh"
+        "psreadline"
+        "terminal-icons"
+        #============== Apps ================
         "7zip"
         "audacity"
+        "authy"
         "blender"
+        "discord"
         "filezilla"
+        "firefox"
         "github"
         "mongodb-compass"
-        "firefox"
-        "nodejs"
         "obs-studio"
-        "vscode"
-        "discord"
-        #======== PowerShell Modules ========
-        "psreadline"
-        "oh-my-posh"
-        "zoxide"
-        "bat"
-        "terminal-icons"
-        "https://raw.githubusercontent.com/YP501/scoop-manifests/main/manifests/completionpredictor.json" # Completion predictor
-        "fzf"
-        "gsudo"
-        "file"
-        #====================================
-        "python"
+        "pwsh"
         "qbittorrent"
         "spotify"
-        "spicetify-cli"
-        "translucenttb"
-        "vlc"
-        "BitstreamVeraSansMono-NF" # For terminal
-        "JetBrains-Mono" # For vscode
-        "yarn"
-        "windows-terminal"
-        "pwsh"
         "tinynvidiaupdatechecker"
-        "ds4windows"
-        "authy"
-        "materialize"
-        "mysql"
+        "vlc"
+        "vscode"
+        "windows-terminal"
+        #============= Commandlets =============
+        "bat"
+        "file"
+        "fzf"
+        "gcc"
+        "gsudo"
+        "spicetify-cli"
+        "yarn"
+        "zoxide"
+        #================= Fonts ================
+        "BitstreamVeraSansMono-NF-Mono"
+        "JetBrains-Mono"
+        #============= Interpreters =============
+        "nodejs"
+        "python"
     )
 
     # Scoop application installation dir for accessing app roots
@@ -151,7 +150,6 @@ function DownloadAndinstallScoopApps {
                 # Installation of vscode extensions
                 $VscodeExtensions = @(
                     "christian-kohler.npm-intellisense"
-                    "dbaeumer.vscode-eslint"
                     "eamodio.gitlens"
                     "esbenp.prettier-vscode"
                     "formulahendry.code-runner"
@@ -162,6 +160,7 @@ function DownloadAndinstallScoopApps {
                     "ms-python.black-formatter"
                     "ms-python.python"
                     "ms-python.vscode-pylance"
+                    "ms-vscode.cpptools"
                     "ms-vscode.powershell"
                     "ms-vsliveshare.vsliveshare"
                     "naumovs.color-highlight"
@@ -225,8 +224,7 @@ function DownloadAndExtractGithubApps {
 
     # Downloading latest releases from github
     DownloadFile -Url (GetGithubDownloadUrl -Repo "chaiNNer-org/chaiNNer" -Filter "windows-x64") -Destination $TempDownloadFolder
-    DownloadFile -Url (GetGithubDownloadUrl -Repo "HeyM1ke/Assist" -Filter "Assist.zip") -Destination $TempDownloadFolder
-    DownloadFile -Url (GetGithubDownloadUrl -Repo "axstin/rbxfpsunlocker" -Filter "x64.zip") -Destination $TempDownloadFolder
+    DownloadFile -Url (GetGithubDownloadUrl -Repo "axstin/rbxfpsunlocker" -Filter "x64-hotfix1.zip") -Destination $TempDownloadFolder
 
     # ----------------------------------------------------------------------------------------------------------
 
@@ -265,7 +263,7 @@ function DownloadAndRunInstallers {
         "https://aka.ms/vs/17/release/vc_redist.x64.exe"                                            # Visual C++ redistributable packages
         "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe"                    # Steam
         "https://app.prntscr.com/build/setup-lightshot.exe"                                         # Lightshot
-        "https://install.medal.tv/MedalSetup.exe"                                                   # Medal.TV
+        "https://github.com/HeyM1ke/Assist/releases/download/V1.0.0/AssistSetup.exe"                                     # Assist
         "https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe"            # Logitech G Hub
     )
 
